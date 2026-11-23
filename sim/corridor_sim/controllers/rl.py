@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import argparse
 import json
-import random
 import time
 
 import numpy as np
@@ -65,34 +64,20 @@ def features(site: Site, view: SiteView, phase_index: int, pressure: float) -> n
     )
 
 
-def reward(site: Site, view: SiteView, neighbour_views: list[SiteView]) -> float:
-    own = sum(view.approach_queue.values()) + 1.5 * sum(view.crosswalk_waiting.values())
-    near = sum(sum(v.approach_queue.values()) for v in neighbour_views)
-    spill = sum(view.approach_spillback.values())
-    return -(own + 0.5 * near) / 20 - 0.5 * spill
-
-
 class RLController(Controller):
     name = "rl"
     label = "Reinforcement learning (trained in simulation)"
 
-    def __init__(self, weights: np.ndarray | None = None, epsilon: float = 0.0, alpha: float = 0.0, gamma: float = 0.9) -> None:
+    def __init__(self, weights: np.ndarray | None = None) -> None:
         if weights is None:
             weights = np.array(json.loads(MODEL_FILE.read_text())["weights"])
         self.weights = weights
-        self.epsilon = epsilon
-        self.alpha = alpha
-        self.gamma = gamma
-        self.views: dict[str, SiteView] = {}
         self._pressure = MaxPressureController()
-        self._last: dict[str, tuple[float, int, np.ndarray]] = {}
+        self._last: dict[str, tuple[float, int]] = {}
 
     @staticmethod
     def available() -> bool:
         return MODEL_FILE.exists()
-
-    def attach(self, views: dict[str, SiteView]) -> None:
-        self.views = views
 
     def _scores(self, site: Site, view: SiteView) -> tuple[list[float], list[np.ndarray]]:
         pressures = self._pressure.pressures(site, view)
@@ -103,18 +88,9 @@ class RLController(Controller):
         last = self._last.get(site.id)
         if last and view.t - last[0] < DECISION_INTERVAL:
             return last[1]
-        scores, feats = self._scores(site, view)
-        if self.alpha > 0 and last is not None:
-            neighbours = [self.views[n] for n in site.neighbours if n in self.views]
-            target = reward(site, view, neighbours) + self.gamma * max(scores)
-            _, action, f = last
-            error = target - float(self.weights @ f)
-            self.weights += self.alpha * np.clip(error, -5, 5) * f
-        if self.epsilon and random.random() < self.epsilon:
-            action = random.randrange(len(site.phases))
-        else:
-            action = max(range(len(scores)), key=scores.__getitem__)
-        self._last[site.id] = (view.t, action, feats[action])
+        scores, _ = self._scores(site, view)
+        action = max(range(len(scores)), key=scores.__getitem__)
+        self._last[site.id] = (view.t, action)
         return action
 
     def explain(self, site: Site, view: SiteView) -> dict[str, float]:
@@ -122,49 +98,71 @@ class RLController(Controller):
         return {str(i): round(s, 2) for i, s in enumerate(scores)}
 
 
-def train(episodes: int, duration: float, scenarios: list[str]) -> None:
+def objective(summary: dict) -> float:
+    return summary["avgVehicleWait"] + 0.5 * summary["avgPedestrianWait"] + 0.5 * summary["teleports"]
+
+
+def evaluate(job: tuple[list[float], str, int, float]) -> float:
     from ..engine import Simulation
 
-    rng = np.random.default_rng(0)
-    weights = np.zeros(len(FEATURES))
-    weights[0] = 1.0
-    weights[6] = 0.3
+    weights, scenario, seed, duration = job
     sim = Simulation()
-    history = []
-    for episode in range(episodes):
-        scenario = scenarios[episode % len(scenarios)]
-        epsilon = max(0.02, 0.3 * (1 - episode / max(episodes - 1, 1)))
-        controller = RLController(weights=weights, epsilon=epsilon, alpha=0.01)
-        sim.start(scenario=scenario, seed=int(rng.integers(1, 10_000)))
-        sim.controller = controller
-        controller.attach(sim.views)
-        started = time.time()
-        while sim.t < duration and not sim.finished:
-            sim.step()
-        summary = sim.metrics.summary(sim.t)
-        weights = controller.weights
-        history.append({"episode": episode, "scenario": scenario, **{k: summary[k] for k in ("avgVehicleWait", "maxPedestrianWait", "vehiclesPerHour")}})
-        print(
-            f"episode {episode:3d} {scenario:16s} eps={epsilon:.2f} wait={summary['avgVehicleWait']:6.1f}s "
-            f"ped_max={summary['maxPedestrianWait']:5.0f}s veh/h={summary['vehiclesPerHour']:5d} ({time.time() - started:.0f}s)",
-            flush=True,
-        )
+    sim.start(scenario=scenario, seed=seed)
+    sim.controller = RLController(weights=np.array(weights))
+    while sim.t < duration and not sim.finished:
+        sim.step()
+    score = objective(sim.metrics.summary(sim.t))
     sim.close()
+    return score
+
+
+def train(iterations: int, population: int, duration: float, scenarios: list[str], workers: int) -> None:
+    from multiprocessing import get_context
+
+    rng = np.random.default_rng(0)
+    mean = np.zeros(len(FEATURES))
+    mean[FEATURES.index("pressure")] = 1.0
+    mean[FEATURES.index("is_current")] = 0.3
+    std = np.full(len(FEATURES), 0.6)
+    std[FEATURES.index("bias")] = 0.0
+    elite_count = max(2, population // 4)
+    history = []
+    best: tuple[float, np.ndarray] = (float("inf"), mean.copy())
+    with get_context("spawn").Pool(workers) as pool:
+        for iteration in range(iterations):
+            started = time.time()
+            candidates = [mean.copy()] + [mean + std * rng.standard_normal(len(FEATURES)) for _ in range(population - 1)]
+            picked = [scenarios[(iteration * 2 + k) % len(scenarios)] for k in range(2)]
+            seeds = [int(rng.integers(1, 10_000)) for _ in picked]
+            jobs = [(list(c), sc, sd, duration) for c in candidates for sc, sd in zip(picked, seeds)]
+            raw = pool.map(evaluate, jobs)
+            scores = [float(np.mean(raw[i * len(picked):(i + 1) * len(picked)])) for i in range(len(candidates))]
+            order = np.argsort(scores)
+            elites = np.array([candidates[i] for i in order[:elite_count]])
+            mean = elites.mean(axis=0)
+            std = np.maximum(elites.std(axis=0), 0.05)
+            std[FEATURES.index("bias")] = 0.0
+            if scores[order[0]] < best[0]:
+                best = (scores[order[0]], candidates[order[0]].copy())
+            history.append({"iteration": iteration, "scenarios": picked, "best": round(scores[order[0]], 1), "meanScore": round(float(np.mean(scores)), 1), "incumbent": round(scores[0], 1)})
+            print(f"iter {iteration:2d} {picked} best={scores[order[0]]:6.1f} mean={np.mean(scores):6.1f} incumbent={scores[0]:6.1f} ({time.time() - started:.0f}s)", flush=True)
     config.MODEL_DIR.mkdir(parents=True, exist_ok=True)
     MODEL_FILE.write_text(
-        json.dumps({"features": FEATURES, "weights": [round(float(w), 5) for w in weights], "history": history}, indent=2)
+        json.dumps({"method": "cross-entropy policy search", "features": FEATURES, "weights": [round(float(w), 4) for w in mean], "history": history}, indent=2)
     )
-    print("weights", dict(zip(FEATURES, np.round(weights, 3))))
+    print("weights", dict(zip(FEATURES, np.round(mean, 3))))
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(prog="corridor_sim.controllers.rl")
     parser.add_argument("command", choices=["train"])
-    parser.add_argument("--episodes", type=int, default=24)
-    parser.add_argument("--duration", type=float, default=1800)
+    parser.add_argument("--iterations", type=int, default=10)
+    parser.add_argument("--population", type=int, default=12)
+    parser.add_argument("--duration", type=float, default=1200)
+    parser.add_argument("--workers", type=int, default=6)
     parser.add_argument("--scenarios", default="morning-rush,midday,evening-rush,incident,pedestrian-surge")
     args = parser.parse_args()
-    train(args.episodes, args.duration, args.scenarios.split(","))
+    train(args.iterations, args.population, args.duration, args.scenarios.split(","), args.workers)
 
 
 if __name__ == "__main__":

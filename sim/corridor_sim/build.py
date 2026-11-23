@@ -391,8 +391,9 @@ def write_scenarios(net: sumolib.net.Net, sites: list[dict]) -> None:
                 rate = total * weight / weight_sum
                 if rate < 1:
                     continue
+                begin = rng.uniform(0, min(3600 / rate, 600))
                 flows.append(
-                    f'  <flow id="f_{entry_id}_{exit_.getID()}" type="mix" begin="0" end="{SCENARIO_DURATION}" '
+                    f'  <flow id="f_{entry_id}_{exit_.getID()}" type="mix" begin="{begin:.1f}" end="{SCENARIO_DURATION}" '
                     f'from="{entry_id}" to="{exit_.getID()}" vehsPerHour="{rate:.1f}" departLane="best" departSpeed="max"/>\n'
                 )
         routes = config.SCENARIO_DIR / f"{name}.rou.xml"
