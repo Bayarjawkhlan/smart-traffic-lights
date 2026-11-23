@@ -87,6 +87,7 @@ class Simulation:
         self._next_congestion = 0.0
         self._seen_waiting: set[str] = set()
         self._scenario_meta: dict = {}
+        self._short_ids: dict[str, int] = {}
 
     def _fit_affine(self) -> np.ndarray:
         xmin, ymin, xmax, ymax = self.net.getBoundary()
@@ -127,6 +128,7 @@ class Simulation:
         self.running = True
         self._scenario_meta = scenarios()[self.scenario]
         self._seen_waiting = set()
+        self._short_ids = {}
         self.t = 0.0
         self.metrics = Metrics()
         self.events.clear()
@@ -324,24 +326,36 @@ class Simulation:
             override=asdict(override),
         )
 
+    def _short_id(self, sumo_id: str) -> int:
+        short = self._short_ids.get(sumo_id)
+        if short is None:
+            short = self._short_ids[sumo_id] = len(self._short_ids) + 1
+        return short
+
     def vehicles(self) -> list[list[float]]:
         ids = traci.vehicle.getIDList()
         if not ids:
             return []
-        xy = np.array([traci.vehicle.getPosition(v) for v in ids])
-        lonlat = self.to_lonlat(xy)
+        lonlat = self.to_lonlat(np.array([traci.vehicle.getPosition(v) for v in ids]))
         result = []
         for (lon, lat), vid in zip(lonlat, ids):
             kind = traci.vehicle.getVehicleClass(vid)
-            result.append([round(lon, 6), round(lat, 6), round(traci.vehicle.getAngle(vid)), 1 if kind == "bus" else 2 if kind == "truck" else 0, 1 if traci.vehicle.getSpeed(vid) < 0.3 else 0])
+            result.append([
+                self._short_id(vid),
+                round(lon, 6),
+                round(lat, 6),
+                round(traci.vehicle.getAngle(vid)),
+                1 if kind == "bus" else 2 if kind == "truck" else 0,
+                1 if traci.vehicle.getSpeed(vid) < 0.3 else 0,
+            ])
         return result
 
     def persons(self) -> list[list[float]]:
         ids = traci.person.getIDList()
         if not ids:
             return []
-        xy = np.array([traci.person.getPosition(p) for p in ids])
-        return [[round(lon, 6), round(lat, 6)] for lon, lat in self.to_lonlat(xy)]
+        lonlat = self.to_lonlat(np.array([traci.person.getPosition(p) for p in ids]))
+        return [[self._short_id(pid), round(lon, 6), round(lat, 6)] for (lon, lat), pid in zip(lonlat, ids)]
 
     def site_states(self) -> list[dict]:
         caps = self.settings.caps
