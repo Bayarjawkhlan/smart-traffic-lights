@@ -4,6 +4,8 @@ An open-source demo of AI traffic-signal control on a 1.3 km stretch of Peace Av
 
 The words used here (Signal Site, Approach, Crosswalk, Phase, Spillback, Safety Guard and so on) are defined in [GLOSSARY.md](GLOSSARY.md). The big decisions are in [docs/adr](docs/adr).
 
+![Live corridor map](docs/screenshots/live-map.png)
+
 ## How it decides
 
 - **The Controller proposes, the Safety Guard decides** ([ADR 0002](docs/adr/0002-controller-proposes-safety-guard-decides.md)). Three Controllers can be switched live:
@@ -34,6 +36,8 @@ These come from Experiment Mode: each Scenario runs for one hour, with the same 
 - **The pedestrian cap held**: no run let a pedestrian wait more than 90 s.
 
 Traffic demand is generated, not measured, so compare the Controllers with each other, not with real Peace Avenue.
+
+![Controllers compared](docs/screenshots/experiments.png)
 
 ## Run it
 
