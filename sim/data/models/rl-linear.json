@@ -1,0 +1,127 @@
+{
+  "method": "cross-entropy policy search",
+  "features": [
+    "pressure",
+    "upstream_queue",
+    "spillback_exits",
+    "pedestrians_waiting",
+    "oldest_pedestrian",
+    "oldest_vehicle",
+    "is_current",
+    "current_age",
+    "bias"
+  ],
+  "weights": [
+    0.6536,
+    0.8854,
+    0.2944,
+    0.6778,
+    0.4037,
+    0.4438,
+    -0.6944,
+    0.0708,
+    0.0
+  ],
+  "history": [
+    {
+      "iteration": 0,
+      "scenarios": [
+        "morning-rush",
+        "midday"
+      ],
+      "best": 28.3,
+      "meanScore": 51.1,
+      "incumbent": 63.5
+    },
+    {
+      "iteration": 1,
+      "scenarios": [
+        "evening-rush",
+        "incident"
+      ],
+      "best": 17.4,
+      "meanScore": 21.2,
+      "incumbent": 17.4
+    },
+    {
+      "iteration": 2,
+      "scenarios": [
+        "pedestrian-surge",
+        "morning-rush"
+      ],
+      "best": 21.9,
+      "meanScore": 25.7,
+      "incumbent": 24.4
+    },
+    {
+      "iteration": 3,
+      "scenarios": [
+        "midday",
+        "evening-rush"
+      ],
+      "best": 28.7,
+      "meanScore": 28.7,
+      "incumbent": 28.7
+    },
+    {
+      "iteration": 4,
+      "scenarios": [
+        "incident",
+        "pedestrian-surge"
+      ],
+      "best": 31.3,
+      "meanScore": 31.3,
+      "incumbent": 31.3
+    },
+    {
+      "iteration": 5,
+      "scenarios": [
+        "morning-rush",
+        "midday"
+      ],
+      "best": 28.9,
+      "meanScore": 28.9,
+      "incumbent": 28.9
+    },
+    {
+      "iteration": 6,
+      "scenarios": [
+        "evening-rush",
+        "incident"
+      ],
+      "best": 15.4,
+      "meanScore": 15.4,
+      "incumbent": 15.4
+    },
+    {
+      "iteration": 7,
+      "scenarios": [
+        "pedestrian-surge",
+        "morning-rush"
+      ],
+      "best": 21.6,
+      "meanScore": 21.9,
+      "incumbent": 21.6
+    },
+    {
+      "iteration": 8,
+      "scenarios": [
+        "midday",
+        "evening-rush"
+      ],
+      "best": 30.1,
+      "meanScore": 30.1,
+      "incumbent": 30.1
+    },
+    {
+      "iteration": 9,
+      "scenarios": [
+        "incident",
+        "pedestrian-surge"
+      ],
+      "best": 26.1,
+      "meanScore": 26.1,
+      "incumbent": 26.1
+    }
+  ]
+}

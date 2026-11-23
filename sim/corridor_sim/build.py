@@ -391,11 +391,11 @@ def write_scenarios(net: sumolib.net.Net, sites: list[dict]) -> None:
                 rate = total * weight / weight_sum
                 if rate < 1:
                     continue
-                begin = rng.uniform(0, min(3600 / rate, 600))
-                flows.append(
+                begin = rng.uniform(0, min(3600 / rate, SCENARIO_DURATION - 1))
+                flows.append((begin,
                     f'  <flow id="f_{entry_id}_{exit_.getID()}" type="mix" begin="{begin:.1f}" end="{SCENARIO_DURATION}" '
                     f'from="{entry_id}" to="{exit_.getID()}" vehsPerHour="{rate:.1f}" departLane="best" departSpeed="max"/>\n'
-                )
+                ))
         routes = config.SCENARIO_DIR / f"{name}.rou.xml"
         routes.write_text(
             "<routes>\n"
@@ -403,7 +403,8 @@ def write_scenarios(net: sumolib.net.Net, sites: list[dict]) -> None:
             '  <vType id="bus" vClass="bus" length="12" minGap="2.5" maxSpeed="15" guiShape="bus"/>\n'
             '  <vType id="truck" vClass="truck" length="8" minGap="2.5" maxSpeed="15" guiShape="truck"/>\n'
             '  <vTypeDistribution id="mix" vTypes="car bus truck" probabilities="0.9 0.05 0.05"/>\n'
-            + "".join(flows)
+            # SUMO silently drops flows that are not sorted by begin time.
+            + "".join(line for _, line in sorted(flows))
             + "</routes>\n"
         )
         _write_pedestrians(net, name, spec, sites, rng.randint(1, 10_000))
