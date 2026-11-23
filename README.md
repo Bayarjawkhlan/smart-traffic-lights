@@ -50,7 +50,7 @@ cd vision && uv sync && ./scripts/fetch_sample_videos.sh && uv run uvicorn app.m
 cd client && pnpm install && pnpm dev
 ```
 
-With Docker, `docker compose up --build` starts all three; the client is then on http://localhost:8080. For the "Explain this decision" narrator, put `OPENAI_API_KEY=...` in `sim/.env.local`. Compose reads it if it exists.
+With Docker, `docker compose up --build` starts all three (if your default buildx builder fails, run `docker buildx use desktop-linux` first); the client is then on http://localhost:8080. For the "Explain this decision" narrator, put `OPENAI_API_KEY=...` in `sim/.env.local`. Compose reads it if it exists.
 
 ## Repository
 
