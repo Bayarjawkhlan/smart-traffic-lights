@@ -1,0 +1,59 @@
+{
+  "scenario": "pedestrian-surge",
+  "label": "Pedestrian surge (event at the square)",
+  "duration": 3600.0,
+  "seed": 42,
+  "finishedAt": "2026-11-23T16:35:42+00:00",
+  "results": {
+    "fixed-time": {
+      "t": 3600.0,
+      "avgVehicleWait": 47.8,
+      "vehiclesPerHour": 1461,
+      "avgPedestrianWait": 19.0,
+      "maxPedestrianWait": 73.0,
+      "spillbackMinutes": 29.5,
+      "overrides": {
+        "pedestrian-hard-cap": 108
+      },
+      "overrideCount": 108,
+      "teleports": 1,
+      "departed": 1526,
+      "arrived": 1461,
+      "wallSeconds": 8.4
+    },
+    "max-pressure": {
+      "t": 3600.0,
+      "avgVehicleWait": 46.1,
+      "vehiclesPerHour": 1460,
+      "avgPedestrianWait": 18.6,
+      "maxPedestrianWait": 79.0,
+      "spillbackMinutes": 68.2,
+      "overrides": {
+        "pedestrian-hard-cap": 29,
+        "vehicle-soft-cap": 11
+      },
+      "overrideCount": 40,
+      "teleports": 6,
+      "departed": 1528,
+      "arrived": 1460,
+      "wallSeconds": 10.1
+    },
+    "rl": {
+      "t": 3600.0,
+      "avgVehicleWait": 29.8,
+      "vehiclesPerHour": 1471,
+      "avgPedestrianWait": 15.6,
+      "maxPedestrianWait": 80.0,
+      "spillbackMinutes": 35.2,
+      "overrides": {
+        "vehicle-soft-cap": 1,
+        "pedestrian-hard-cap": 3
+      },
+      "overrideCount": 4,
+      "teleports": 0,
+      "departed": 1526,
+      "arrived": 1471,
+      "wallSeconds": 8.1
+    }
+  }
+}

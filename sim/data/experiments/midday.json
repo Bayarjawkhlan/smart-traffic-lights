@@ -1,0 +1,59 @@
+{
+  "scenario": "midday",
+  "label": "Midday",
+  "duration": 3600.0,
+  "seed": 42,
+  "finishedAt": "2026-11-23T16:34:41+00:00",
+  "results": {
+    "fixed-time": {
+      "t": 3600.0,
+      "avgVehicleWait": 51.9,
+      "vehiclesPerHour": 1414,
+      "avgPedestrianWait": 26.9,
+      "maxPedestrianWait": 72.0,
+      "spillbackMinutes": 60.4,
+      "overrides": {
+        "pedestrian-hard-cap": 23,
+        "vehicle-soft-cap": 4
+      },
+      "overrideCount": 27,
+      "teleports": 9,
+      "departed": 1498,
+      "arrived": 1414,
+      "wallSeconds": 4.9
+    },
+    "max-pressure": {
+      "t": 3600.0,
+      "avgVehicleWait": 37.0,
+      "vehiclesPerHour": 1422,
+      "avgPedestrianWait": 19.6,
+      "maxPedestrianWait": 74.0,
+      "spillbackMinutes": 38.5,
+      "overrides": {
+        "pedestrian-hard-cap": 5,
+        "vehicle-soft-cap": 7
+      },
+      "overrideCount": 12,
+      "teleports": 7,
+      "departed": 1498,
+      "arrived": 1422,
+      "wallSeconds": 4.8
+    },
+    "rl": {
+      "t": 3600.0,
+      "avgVehicleWait": 29.1,
+      "vehiclesPerHour": 1427,
+      "avgPedestrianWait": 15.9,
+      "maxPedestrianWait": 80.0,
+      "spillbackMinutes": 37.1,
+      "overrides": {
+        "pedestrian-hard-cap": 2
+      },
+      "overrideCount": 2,
+      "teleports": 4,
+      "departed": 1498,
+      "arrived": 1427,
+      "wallSeconds": 4.7
+    }
+  }
+}

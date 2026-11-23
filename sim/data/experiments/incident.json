@@ -1,0 +1,59 @@
+{
+  "scenario": "incident",
+  "label": "Incident: lane blocked",
+  "duration": 3600.0,
+  "seed": 42,
+  "finishedAt": "2026-11-23T16:35:16+00:00",
+  "results": {
+    "fixed-time": {
+      "t": 3600.0,
+      "avgVehicleWait": 54.5,
+      "vehiclesPerHour": 1736,
+      "avgPedestrianWait": 27.3,
+      "maxPedestrianWait": 74.0,
+      "spillbackMinutes": 83.3,
+      "overrides": {
+        "vehicle-soft-cap": 7,
+        "pedestrian-hard-cap": 22
+      },
+      "overrideCount": 29,
+      "teleports": 10,
+      "departed": 1840,
+      "arrived": 1736,
+      "wallSeconds": 5.4
+    },
+    "max-pressure": {
+      "t": 3600.0,
+      "avgVehicleWait": 55.6,
+      "vehiclesPerHour": 1676,
+      "avgPedestrianWait": 19.8,
+      "maxPedestrianWait": 72.0,
+      "spillbackMinutes": 130.6,
+      "overrides": {
+        "vehicle-soft-cap": 24,
+        "pedestrian-hard-cap": 5
+      },
+      "overrideCount": 29,
+      "teleports": 29,
+      "departed": 1841,
+      "arrived": 1676,
+      "wallSeconds": 5.8
+    },
+    "rl": {
+      "t": 3600.0,
+      "avgVehicleWait": 26.9,
+      "vehiclesPerHour": 1761,
+      "avgPedestrianWait": 16.5,
+      "maxPedestrianWait": 78.0,
+      "spillbackMinutes": 24.9,
+      "overrides": {
+        "pedestrian-hard-cap": 2
+      },
+      "overrideCount": 2,
+      "teleports": 0,
+      "departed": 1840,
+      "arrived": 1761,
+      "wallSeconds": 5.1
+    }
+  }
+}

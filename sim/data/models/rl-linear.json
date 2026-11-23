@@ -12,14 +12,14 @@
     "bias"
   ],
   "weights": [
-    0.6536,
-    0.8854,
-    0.2944,
-    0.6778,
-    0.4037,
-    0.4438,
-    -0.6944,
-    0.0708,
+    0.6866,
+    0.8865,
+    0.5623,
+    0.832,
+    -0.2353,
+    0.7288,
+    -0.4099,
+    -0.0975,
     0.0
   ],
   "history": [
@@ -29,9 +29,9 @@
         "morning-rush",
         "midday"
       ],
-      "best": 28.3,
-      "meanScore": 51.1,
-      "incumbent": 63.5
+      "best": 34.0,
+      "meanScore": 73.2,
+      "incumbent": 83.0
     },
     {
       "iteration": 1,
@@ -39,9 +39,9 @@
         "evening-rush",
         "incident"
       ],
-      "best": 17.4,
-      "meanScore": 21.2,
-      "incumbent": 17.4
+      "best": 34.4,
+      "meanScore": 43.1,
+      "incumbent": 36.4
     },
     {
       "iteration": 2,
@@ -49,9 +49,9 @@
         "pedestrian-surge",
         "morning-rush"
       ],
-      "best": 21.9,
-      "meanScore": 25.7,
-      "incumbent": 24.4
+      "best": 34.5,
+      "meanScore": 36.5,
+      "incumbent": 35.4
     },
     {
       "iteration": 3,
@@ -59,9 +59,9 @@
         "midday",
         "evening-rush"
       ],
-      "best": 28.7,
-      "meanScore": 28.7,
-      "incumbent": 28.7
+      "best": 33.6,
+      "meanScore": 34.3,
+      "incumbent": 33.6
     },
     {
       "iteration": 4,
@@ -69,9 +69,9 @@
         "incident",
         "pedestrian-surge"
       ],
-      "best": 31.3,
-      "meanScore": 31.3,
-      "incumbent": 31.3
+      "best": 36.6,
+      "meanScore": 41.2,
+      "incumbent": 43.7
     },
     {
       "iteration": 5,
@@ -79,9 +79,9 @@
         "morning-rush",
         "midday"
       ],
-      "best": 28.9,
-      "meanScore": 28.9,
-      "incumbent": 28.9
+      "best": 34.5,
+      "meanScore": 37.8,
+      "incumbent": 38.0
     },
     {
       "iteration": 6,
@@ -89,9 +89,9 @@
         "evening-rush",
         "incident"
       ],
-      "best": 15.4,
-      "meanScore": 15.4,
-      "incumbent": 15.4
+      "best": 34.3,
+      "meanScore": 40.3,
+      "incumbent": 58.1
     },
     {
       "iteration": 7,
@@ -99,9 +99,9 @@
         "pedestrian-surge",
         "morning-rush"
       ],
-      "best": 21.6,
-      "meanScore": 21.9,
-      "incumbent": 21.6
+      "best": 36.3,
+      "meanScore": 36.6,
+      "incumbent": 36.5
     },
     {
       "iteration": 8,
@@ -109,9 +109,9 @@
         "midday",
         "evening-rush"
       ],
-      "best": 30.1,
-      "meanScore": 30.1,
-      "incumbent": 30.1
+      "best": 33.5,
+      "meanScore": 34.2,
+      "incumbent": 33.5
     },
     {
       "iteration": 9,
@@ -119,9 +119,29 @@
         "incident",
         "pedestrian-surge"
       ],
-      "best": 26.1,
-      "meanScore": 26.1,
-      "incumbent": 26.1
+      "best": 35.1,
+      "meanScore": 35.5,
+      "incumbent": 35.5
+    },
+    {
+      "iteration": 10,
+      "scenarios": [
+        "morning-rush",
+        "midday"
+      ],
+      "best": 33.3,
+      "meanScore": 34.3,
+      "incumbent": 34.3
+    },
+    {
+      "iteration": 11,
+      "scenarios": [
+        "evening-rush",
+        "incident"
+      ],
+      "best": 33.6,
+      "meanScore": 37.1,
+      "incumbent": 35.3
     }
   ]
 }

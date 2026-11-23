@@ -103,15 +103,20 @@ def objective(summary: dict) -> float:
 
 
 def evaluate(job: tuple[list[float], str, int, float]) -> float:
+    import libsumo as traci
+
     from ..engine import Simulation
 
     weights, scenario, seed, duration = job
     sim = Simulation()
     sim.start(scenario=scenario, seed=seed)
     sim.controller = RLController(weights=np.array(weights))
+    backlog = 0
     while sim.t < duration and not sim.finished:
         sim.step()
-    score = objective(sim.metrics.summary(sim.t))
+        if sim.t % 60 == 0:
+            backlog += len(traci.simulation.getPendingVehicles())
+    score = objective(sim.metrics.summary(sim.t)) + backlog / max(duration / 60, 1)
     sim.close()
     return score
 
