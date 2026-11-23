@@ -238,10 +238,13 @@ def explain_site(request: ExplainRequest) -> dict:
         states = {s["id"]: s for s in sim.site_states()}
         current = states[site.id]
         labels = {a.id: a.label for a in site.approaches} | {c.id: c.label for c in site.crosswalks}
+        if request.language == "mn":
+            streets = {a["id"]: a["street"] for s in json.loads(config.SITES_FILE.read_text()) if s["id"] == site.id for a in s["approaches"]}
+            labels |= {aid: f"{street} ({labels[aid].rsplit(' ', 1)[-1]})" for aid, street in streets.items() if street}
         phases = sim.describe()["sites"]
         phase_info = next(p for p in phases if p["id"] == site.id)["phases"]
         return {
-            "site": site.name_en,
+            "site": site.name_mn if request.language == "mn" else site.name_en,
             "controller": sim.controller.label,
             "time": round(sim.t, 1),
             "stage": current["stage"],
