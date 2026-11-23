@@ -201,10 +201,10 @@ def control(command: Control) -> dict:
                 raise HTTPException(400, "caps out of range: pedestrian 45-300 s, 60 <= soft <= hard <= 600 s")
             runner.call(lambda: _set_caps(ped, soft, hard))
         case "button":
-            _require(command.site, command.target)
+            _require(command.site, command.target, "crosswalks")
             runner.call(lambda: sim.press_button(command.site, command.target))
         case "block":
-            _require(command.site, command.target)
+            _require(command.site, command.target, "approaches")
             runner.call(lambda: sim.toggle_block(command.site, command.target))
     state = runner.state()
     runner._broadcast(json.dumps(state))
@@ -217,9 +217,11 @@ def _set_caps(ped: float, soft: float, hard: float) -> None:
     runner.sim._event("caps", f"Caps changed: pedestrians {ped:.0f} s, vehicles soft {soft:.0f} s / hard {hard:.0f} s")
 
 
-def _require(site: str | None, target: str | None) -> None:
+def _require(site: str | None, target: str | None, kind: str) -> None:
     if not site or site not in runner.sim.site_by_id or not target:
         raise HTTPException(400, "site and target are required")
+    if target not in {item.id for item in getattr(runner.sim.site_by_id[site], kind)}:
+        raise HTTPException(404, f"unknown {kind[:-1]} at {site}")
 
 
 class ExplainRequest(BaseModel):
@@ -282,7 +284,8 @@ def experiments() -> dict:
 
 class ExperimentRequest(BaseModel):
     scenarios: list[str] = Field(default_factory=lambda: list(scenarios()))
-    duration: float = Field(default=3600, ge=300, le=3600)
+    # Runs overwrite the stored hour-long result per Scenario, so shorter runs would not be comparable.
+    duration: float = Field(default=3600, ge=3600, le=3600)
 
 
 @app.post("/api/experiments")
@@ -313,7 +316,8 @@ async def frames(socket: WebSocket) -> None:
     try:
         await socket.send_text(json.dumps(runner.state()))
         if runner.last_frame:
-            await socket.send_text(json.dumps(runner.last_frame, ensure_ascii=False))
+            history = runner.last_frame | {"events": list(runner.sim.events)}
+            await socket.send_text(json.dumps(history, ensure_ascii=False))
         while True:
             await socket.send_text(await inbox.get())
     except WebSocketDisconnect:
