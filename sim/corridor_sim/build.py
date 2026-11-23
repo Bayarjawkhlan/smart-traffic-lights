@@ -421,7 +421,8 @@ def _write_pedestrians(net: sumolib.net.Net, name: str, spec: dict, sites: list[
         sys.executable,
         str(config.SUMO_TOOLS / "randomTrips.py"),
         "-n", str(config.NET_FILE),
-        "-o", str(out),
+        "-o", str(config.SCENARIO_DIR / f"{name}.ped.trips.xml"),
+        "-r", str(out),
         "--pedestrians",
         "--prefix", "p",
         "--seed", str(seed),
@@ -446,7 +447,7 @@ def _write_pedestrians(net: sumolib.net.Net, name: str, spec: dict, sites: list[
         Path(f"{prefix}.dst.xml").write_text(body)
         cmd += ["--weights-prefix", str(prefix)]
     run(cmd)
-    for suffix in (".weights.src.xml", ".weights.dst.xml"):
+    for suffix in (".weights.src.xml", ".weights.dst.xml", ".ped.trips.xml"):
         (config.SCENARIO_DIR / f"{name}{suffix}").unlink(missing_ok=True)
 
 
