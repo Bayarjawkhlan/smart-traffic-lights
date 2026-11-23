@@ -1,0 +1,29 @@
+{
+  "morning-rush": {
+    "label": "Morning rush",
+    "duration": 3600
+  },
+  "midday": {
+    "label": "Midday",
+    "duration": 3600
+  },
+  "evening-rush": {
+    "label": "Evening rush",
+    "duration": 3600
+  },
+  "incident": {
+    "label": "Incident: lane blocked",
+    "incident": {
+      "site": "ikh-surguuli",
+      "approach": "Peace Ave eastbound",
+      "start": 240,
+      "end": 1500
+    },
+    "duration": 3600
+  },
+  "pedestrian-surge": {
+    "label": "Pedestrian surge (event at the square)",
+    "ped_focus": "tuv-shuudan",
+    "duration": 3600
+  }
+}

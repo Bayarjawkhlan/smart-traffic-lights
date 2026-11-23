@@ -1,0 +1,300 @@
+[
+  {
+    "id": "ikh-delguur",
+    "nameEn": "State Department Store",
+    "nameMn": "Их дэлгүүр",
+    "kind": "midblock",
+    "tls": "cluster_8995081814_cluster_4038646299_8995081807_8995081815",
+    "center": [
+      106.90641,
+      47.916165
+    ],
+    "approaches": [
+      {
+        "id": "376274881#2-AddedOffRampEdge",
+        "street": "Энх тайваны өргөн чөлөө",
+        "label": "Peace Ave eastbound"
+      },
+      {
+        "id": "561693517#2",
+        "street": "Энх тайваны өргөн чөлөө",
+        "label": "Peace Ave westbound"
+      }
+    ],
+    "crosswalks": [
+      {
+        "id": ":cluster_8995081814_cluster_4038646299_8995081807_8995081815_c0",
+        "label": "Crosswalk across Peace Ave",
+        "length": 25.4
+      },
+      {
+        "id": ":cluster_8995081814_cluster_4038646299_8995081807_8995081815_c1",
+        "label": "Crosswalk across Peace Ave",
+        "length": 18.4
+      }
+    ],
+    "neighbours": [
+      "baga-toiruu-west"
+    ]
+  },
+  {
+    "id": "baga-toiruu-west",
+    "nameEn": "Baga Toiruu West",
+    "nameMn": "Бага тойруу (баруун)",
+    "kind": "intersection",
+    "tls": "cluster_1055337506_2942888033_57677289_8047231641_#2more",
+    "center": [
+      106.911929,
+      47.916755
+    ],
+    "approaches": [
+      {
+        "id": "-1057541826#1",
+        "street": "Бага тойруу",
+        "label": "Baga Toiruu southbound"
+      },
+      {
+        "id": "1537675829",
+        "street": "Энх тайваны өргөн чөлөө",
+        "label": "Peace Ave eastbound"
+      },
+      {
+        "id": "1537180321",
+        "street": "Энх тайваны өргөн чөлөө",
+        "label": "Peace Ave westbound"
+      }
+    ],
+    "crosswalks": [
+      {
+        "id": ":cluster_1055337506_2942888033_57677289_8047231641_#2more_c0",
+        "label": "Crosswalk across Peace Ave",
+        "length": 25.5
+      },
+      {
+        "id": ":cluster_1055337506_2942888033_57677289_8047231641_#2more_c1",
+        "label": "Crosswalk across the road",
+        "length": 12.8
+      },
+      {
+        "id": ":cluster_1055337506_2942888033_57677289_8047231641_#2more_c2",
+        "label": "Crosswalk across Peace Ave",
+        "length": 22.5
+      },
+      {
+        "id": ":cluster_1055337506_2942888033_57677289_8047231641_#2more_c3",
+        "label": "Crosswalk across Baga Toiruu",
+        "length": 12.8
+      }
+    ],
+    "neighbours": [
+      "ikh-delguur",
+      "tuv-shuudan"
+    ]
+  },
+  {
+    "id": "tuv-shuudan",
+    "nameEn": "Central Post Office",
+    "nameMn": "Төв шуудан",
+    "kind": "intersection",
+    "tls": "cluster_1245746484_1270395917_1270396026_8420520244_#4more",
+    "center": [
+      106.916217,
+      47.916742
+    ],
+    "approaches": [
+      {
+        "id": "-1326469952",
+        "street": "Чингисийн өргөн чөлөө",
+        "label": "Chinggis Ave northbound"
+      },
+      {
+        "id": "-430348648#1",
+        "street": "Чингисийн өргөн чөлөө",
+        "label": "Chinggis Ave northbound"
+      },
+      {
+        "id": "430348648#0",
+        "street": "Чингисийн өргөн чөлөө",
+        "label": "Chinggis Ave southbound"
+      },
+      {
+        "id": "111314589#0",
+        "street": "Д.Сүхбаатарын гудамж",
+        "label": "D. Sükhbaatar St southbound"
+      },
+      {
+        "id": "1537180319",
+        "street": "Энх тайваны өргөн чөлөө",
+        "label": "Peace Ave eastbound"
+      },
+      {
+        "id": "1537180317",
+        "street": "Энх тайваны өргөн чөлөө",
+        "label": "Peace Ave westbound"
+      },
+      {
+        "id": "108195270",
+        "street": "",
+        "label": "Side road eastbound"
+      }
+    ],
+    "crosswalks": [
+      {
+        "id": ":cluster_1245746484_1270395917_1270396026_8420520244_#4more_c0",
+        "label": "Crosswalk across D. Sükhbaatar St",
+        "length": 19.2
+      },
+      {
+        "id": ":cluster_1245746484_1270395917_1270396026_8420520244_#4more_c1",
+        "label": "Crosswalk across Peace Ave",
+        "length": 16.0
+      },
+      {
+        "id": ":cluster_1245746484_1270395917_1270396026_8420520244_#4more_c2",
+        "label": "Crosswalk across Peace Ave",
+        "length": 9.6
+      },
+      {
+        "id": ":cluster_1245746484_1270395917_1270396026_8420520244_#4more_c3",
+        "label": "Crosswalk across the road",
+        "length": 3.2
+      },
+      {
+        "id": ":cluster_1245746484_1270395917_1270396026_8420520244_#4more_c4",
+        "label": "Crosswalk across Chinggis Ave",
+        "length": 12.8
+      },
+      {
+        "id": ":cluster_1245746484_1270395917_1270396026_8420520244_#4more_c5",
+        "label": "Crosswalk across Chinggis Ave",
+        "length": 6.4
+      },
+      {
+        "id": ":cluster_1245746484_1270395917_1270396026_8420520244_#4more_c6",
+        "label": "Crosswalk across the road",
+        "length": 3.2
+      },
+      {
+        "id": ":cluster_1245746484_1270395917_1270396026_8420520244_#4more_c7",
+        "label": "Crosswalk across Peace Ave",
+        "length": 20.9
+      }
+    ],
+    "neighbours": [
+      "baga-toiruu-west",
+      "ikh-surguuli"
+    ]
+  },
+  {
+    "id": "ikh-surguuli",
+    "nameEn": "University St / Olympic St",
+    "nameMn": "Их сургуулийн гудамж",
+    "kind": "intersection",
+    "tls": "joinedS_14002450297_cluster_1054352912_1268520278_2499240117_3911981611_#7more",
+    "center": [
+      106.919614,
+      47.917297
+    ],
+    "approaches": [
+      {
+        "id": "1057540305#1",
+        "street": "Олимпийн гудамж",
+        "label": "Olympic St northbound"
+      },
+      {
+        "id": "1537180313#0",
+        "street": "Энх тайваны өргөн чөлөө",
+        "label": "Peace Ave eastbound"
+      },
+      {
+        "id": "1528135709#0",
+        "street": "Энх тайваны өргөн чөлөө",
+        "label": "Peace Ave westbound"
+      },
+      {
+        "id": "1537180296#0",
+        "street": "",
+        "label": "Side road northbound"
+      },
+      {
+        "id": "-1537180311",
+        "street": "Их сургуулийн гудамж",
+        "label": "University St southbound"
+      }
+    ],
+    "crosswalks": [
+      {
+        "id": ":cluster_1054352912_1268520278_2499240117_3911981611_#7more_c0",
+        "label": "Crosswalk across Peace Ave",
+        "length": 19.3
+      },
+      {
+        "id": ":cluster_1054352912_1268520278_2499240117_3911981611_#7more_c1",
+        "label": "Crosswalk across Olympic St",
+        "length": 22.7
+      },
+      {
+        "id": ":cluster_1054352912_1268520278_2499240117_3911981611_#7more_c2",
+        "label": "Crosswalk across Peace Ave",
+        "length": 23.2
+      },
+      {
+        "id": ":cluster_1054352912_1268520278_2499240117_3911981611_#7more_c3",
+        "label": "Crosswalk across University St",
+        "length": 16.0
+      }
+    ],
+    "neighbours": [
+      "baga-toiruu-east",
+      "tuv-shuudan"
+    ]
+  },
+  {
+    "id": "baga-toiruu-east",
+    "nameEn": "Baga Toiruu East",
+    "nameMn": "Бага тойруу (зүүн)",
+    "kind": "intersection",
+    "tls": "cluster_1054352964_57677290",
+    "center": [
+      106.923918,
+      47.917789
+    ],
+    "approaches": [
+      {
+        "id": "-362407168#1",
+        "street": "Бага Тойруу",
+        "label": "Baga Toiruu southbound"
+      },
+      {
+        "id": "1057498219#3",
+        "street": "Энх тайваны өргөн чөлөө",
+        "label": "Peace Ave eastbound"
+      },
+      {
+        "id": "90810948#2",
+        "street": "Энх тайваны өргөн чөлөө",
+        "label": "Peace Ave westbound"
+      }
+    ],
+    "crosswalks": [
+      {
+        "id": ":cluster_1054352964_57677290_c0",
+        "label": "Crosswalk across Peace Ave",
+        "length": 20.4
+      },
+      {
+        "id": ":cluster_1054352964_57677290_c1",
+        "label": "Crosswalk across Peace Ave",
+        "length": 20.5
+      },
+      {
+        "id": ":cluster_1054352964_57677290_c2",
+        "label": "Crosswalk across Baga Toiruu",
+        "length": 12.8
+      }
+    ],
+    "neighbours": [
+      "ikh-surguuli"
+    ]
+  }
+]

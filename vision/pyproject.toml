@@ -1,0 +1,30 @@
+[project]
+name = "vision"
+version = "0.1.0"
+description = "Camera vision showcase: per-Approach Queue and per-Crosswalk Pedestrian Demand from recorded street video"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+license = "AGPL-3.0-only"
+dependencies = [
+    "fastapi>=0.165.0",
+    "lap>=0.5.14",
+    "numpy>=2.5.5",
+    "opencv-python>=5.1.0.95",
+    "torch>=2.15.0",
+    "torchvision>=0.29.2",
+    "ultralytics>=8.4.216",
+    "uvicorn[standard]>=0.54.0",
+]
+
+# Linux would otherwise resolve the CUDA build of torch (several GB) for the CPU-only Docker image.
+[tool.uv.sources]
+torch = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+torchvision = [{ index = "pytorch-cpu", marker = "sys_platform == 'linux'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[tool.ruff]
+line-length = 120

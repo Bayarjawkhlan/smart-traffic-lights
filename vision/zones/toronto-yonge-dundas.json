@@ -1,0 +1,22 @@
+{
+  "zones": [
+    {
+      "id": "dundas-approach",
+      "kind": "approach",
+      "label": "Dundas St",
+      "polygon": [[0.0, 0.62], [1.0, 0.615], [1.0, 0.72], [0.0, 0.78]]
+    },
+    {
+      "id": "far-crosswalk",
+      "kind": "crosswalk",
+      "label": "Far kerb",
+      "polygon": [[0.08, 0.53], [0.98, 0.53], [0.98, 0.615], [0.08, 0.62]]
+    },
+    {
+      "id": "yonge-crosswalk",
+      "kind": "crosswalk",
+      "label": "Yonge crosswalk",
+      "polygon": [[0.45, 1.0], [0.86, 0.76], [1.0, 0.72], [1.0, 1.0]]
+    }
+  ]
+}
