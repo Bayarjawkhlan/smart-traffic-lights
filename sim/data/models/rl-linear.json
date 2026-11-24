@@ -1,5 +1,6 @@
 {
   "method": "cross-entropy policy search",
+  "network": "02b3baeaa37758c932eed40500975970546b1c1c733232ec85dfa7af7dbb83b9",
   "features": [
     "pressure",
     "upstream_queue",
@@ -12,14 +13,14 @@
     "bias"
   ],
   "weights": [
-    0.6866,
-    0.8865,
-    0.5623,
-    0.832,
-    -0.2353,
-    0.7288,
-    -0.4099,
-    -0.0975,
+    0.4815,
+    0.1454,
+    0.472,
+    0.2254,
+    -0.1382,
+    0.1953,
+    -0.6962,
+    -0.2064,
     0.0
   ],
   "history": [
@@ -29,9 +30,9 @@
         "morning-rush",
         "midday"
       ],
-      "best": 34.0,
-      "meanScore": 73.2,
-      "incumbent": 83.0
+      "best": 42.5,
+      "meanScore": 87.6,
+      "incumbent": 108.9
     },
     {
       "iteration": 1,
@@ -39,9 +40,9 @@
         "evening-rush",
         "incident"
       ],
-      "best": 34.4,
-      "meanScore": 43.1,
-      "incumbent": 36.4
+      "best": 48.2,
+      "meanScore": 50.2,
+      "incumbent": 49.3
     },
     {
       "iteration": 2,
@@ -49,9 +50,9 @@
         "pedestrian-surge",
         "morning-rush"
       ],
-      "best": 34.5,
-      "meanScore": 36.5,
-      "incumbent": 35.4
+      "best": 42.6,
+      "meanScore": 44.6,
+      "incumbent": 43.5
     },
     {
       "iteration": 3,
@@ -59,9 +60,9 @@
         "midday",
         "evening-rush"
       ],
-      "best": 33.6,
-      "meanScore": 34.3,
-      "incumbent": 33.6
+      "best": 44.8,
+      "meanScore": 45.8,
+      "incumbent": 44.8
     },
     {
       "iteration": 4,
@@ -69,9 +70,9 @@
         "incident",
         "pedestrian-surge"
       ],
-      "best": 36.6,
-      "meanScore": 41.2,
-      "incumbent": 43.7
+      "best": 42.6,
+      "meanScore": 43.8,
+      "incumbent": 43.9
     },
     {
       "iteration": 5,
@@ -79,9 +80,9 @@
         "morning-rush",
         "midday"
       ],
-      "best": 34.5,
-      "meanScore": 37.8,
-      "incumbent": 38.0
+      "best": 42.1,
+      "meanScore": 43.3,
+      "incumbent": 43.6
     },
     {
       "iteration": 6,
@@ -89,9 +90,9 @@
         "evening-rush",
         "incident"
       ],
-      "best": 34.3,
-      "meanScore": 40.3,
-      "incumbent": 58.1
+      "best": 45.6,
+      "meanScore": 47.5,
+      "incumbent": 46.9
     },
     {
       "iteration": 7,
@@ -99,9 +100,9 @@
         "pedestrian-surge",
         "morning-rush"
       ],
-      "best": 36.3,
-      "meanScore": 36.6,
-      "incumbent": 36.5
+      "best": 42.7,
+      "meanScore": 44.9,
+      "incumbent": 44.7
     },
     {
       "iteration": 8,
@@ -109,9 +110,9 @@
         "midday",
         "evening-rush"
       ],
-      "best": 33.5,
-      "meanScore": 34.2,
-      "incumbent": 33.5
+      "best": 46.8,
+      "meanScore": 48.3,
+      "incumbent": 49.0
     },
     {
       "iteration": 9,
@@ -119,9 +120,9 @@
         "incident",
         "pedestrian-surge"
       ],
-      "best": 35.1,
-      "meanScore": 35.5,
-      "incumbent": 35.5
+      "best": 45.9,
+      "meanScore": 47.1,
+      "incumbent": 47.4
     },
     {
       "iteration": 10,
@@ -129,9 +130,9 @@
         "morning-rush",
         "midday"
       ],
-      "best": 33.3,
-      "meanScore": 34.3,
-      "incumbent": 34.3
+      "best": 43.6,
+      "meanScore": 44.6,
+      "incumbent": 44.7
     },
     {
       "iteration": 11,
@@ -139,9 +140,9 @@
         "evening-rush",
         "incident"
       ],
-      "best": 33.6,
-      "meanScore": 37.1,
-      "incumbent": 35.3
+      "best": 46.5,
+      "meanScore": 47.6,
+      "incumbent": 46.8
     }
   ]
 }

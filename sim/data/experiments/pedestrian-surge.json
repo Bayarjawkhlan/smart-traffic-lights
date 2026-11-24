@@ -1,59 +1,62 @@
 {
   "scenario": "pedestrian-surge",
   "label": "Pedestrian surge (event at the square)",
-  "duration": 3600.0,
+  "duration": 3600,
   "seed": 42,
-  "finishedAt": "2026-11-23T16:35:42+00:00",
+  "network": "02b3baeaa37758c932eed40500975970546b1c1c733232ec85dfa7af7dbb83b9",
+  "finishedAt": "2026-11-24T03:51:12+00:00",
   "results": {
     "fixed-time": {
       "t": 3600.0,
-      "avgVehicleWait": 47.8,
-      "vehiclesPerHour": 1461,
-      "avgPedestrianWait": 19.0,
-      "maxPedestrianWait": 73.0,
-      "spillbackMinutes": 29.5,
+      "avgVehicleWait": 98.7,
+      "maxVehicleWait": 67.0,
+      "vehiclesPerHour": 3004,
+      "avgPedestrianWait": 22.1,
+      "maxPedestrianWait": 63.0,
+      "spillbackMinutes": 0.0,
       "overrides": {
-        "pedestrian-hard-cap": 108
+        "pedestrian-hard-cap": 49
       },
-      "overrideCount": 108,
-      "teleports": 1,
-      "departed": 1526,
-      "arrived": 1461,
-      "wallSeconds": 8.4
+      "overrideCount": 49,
+      "teleports": 16,
+      "departed": 3317,
+      "arrived": 3004,
+      "wallSeconds": 19.6
     },
     "max-pressure": {
       "t": 3600.0,
-      "avgVehicleWait": 46.1,
-      "vehiclesPerHour": 1460,
-      "avgPedestrianWait": 18.6,
-      "maxPedestrianWait": 79.0,
-      "spillbackMinutes": 68.2,
+      "avgVehicleWait": 62.8,
+      "maxVehicleWait": 99.0,
+      "vehiclesPerHour": 3057,
+      "avgPedestrianWait": 16.0,
+      "maxPedestrianWait": 71.0,
+      "spillbackMinutes": 0.0,
       "overrides": {
-        "pedestrian-hard-cap": 29,
-        "vehicle-soft-cap": 11
+        "vehicle-soft-cap": 42,
+        "pedestrian-hard-cap": 1
       },
-      "overrideCount": 40,
-      "teleports": 6,
-      "departed": 1528,
-      "arrived": 1460,
-      "wallSeconds": 10.1
+      "overrideCount": 43,
+      "teleports": 17,
+      "departed": 3317,
+      "arrived": 3057,
+      "wallSeconds": 17.8
     },
     "rl": {
       "t": 3600.0,
-      "avgVehicleWait": 29.8,
-      "vehiclesPerHour": 1471,
-      "avgPedestrianWait": 15.6,
-      "maxPedestrianWait": 80.0,
-      "spillbackMinutes": 35.2,
+      "avgVehicleWait": 43.8,
+      "maxVehicleWait": 46.0,
+      "vehiclesPerHour": 3120,
+      "avgPedestrianWait": 10.9,
+      "maxPedestrianWait": 73.0,
+      "spillbackMinutes": 0.0,
       "overrides": {
-        "vehicle-soft-cap": 1,
-        "pedestrian-hard-cap": 3
+        "pedestrian-hard-cap": 5
       },
-      "overrideCount": 4,
-      "teleports": 0,
-      "departed": 1526,
-      "arrived": 1471,
-      "wallSeconds": 8.1
+      "overrideCount": 5,
+      "teleports": 15,
+      "departed": 3317,
+      "arrived": 3120,
+      "wallSeconds": 16.7
     }
   }
 }
