@@ -2,7 +2,7 @@
 spec: docs/specs/0001-street-network/index.md
 branch: factory/street-network   worktree: /Users/bayarjavkhlan/Documents/projects/smart-traffic-lights-factory-street-network   base: feat/corridor-demo (local, unpushed, 9ada9d0)
 ship policy: none chosen (user asleep): no push, no PR, no merge; stop at a finished local branch
-stage: build
+stage: verify
 round: 0
 pr:
 ## Log
@@ -20,3 +20,9 @@ pr:
 - 2026-11-24 finding: Spillback is 0.0 in every run. In commit 9ada9d0 (evening-rush, Max-pressure, one run traced) all 45.4 lane-minutes came from 0.2 to 7.1 m stub exit lanes, which the new joins removed; the shortest exit lane is now 16.6 m. The sensor only reads the first exit edge. Not changed; for the user.
 - 2026-11-24 finding (pre-existing): fetch_osm.sh fetches no relations, so 45 OSM turn restrictions in the area are missing from the net. Not changed; for the user.
 - 2026-11-24 build S5 done: README files, research note, screenshots. Open text questions: About says the caps are never exceeded (not true at Operator cap 45), the event-log empty text, vision.png branding.
+- 2026-11-24 verify round 0: 15 of 17 pass. AC10 failed at 8.5x (fixed per-step sleep overshoots), sent to the runtime builder. AC14 failed on one research-note sentence, corrected by the foreman. Verifier notes: arrow keys on the native select untested headless; explanation text not checked (no LLM key); AC16 grey signals near invisible in a screenshot. Pre-existing, unfixed: "Failed to fetch" and "Skip to content" stay English in Mongolian mode. Verifier screenshots: scratchpad/verify.
+| AC | Result |
+|---|---|
+| AC1-AC9, AC11-AC13, AC15-AC17 | pass |
+| AC10 | fail at 8.5x, 60 fps passes |
+| AC14 | fail on one sentence, fixed |

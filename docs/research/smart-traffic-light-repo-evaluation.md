@@ -244,7 +244,7 @@ Whatever the result, plan on hand-checking each of the 6 junctions in netedit. S
    SUMO has no flashing-ped state, so this logic is yours by necessity (§3.1).
 5. **Pedestrians first-class.** SUMO crossings are signal links at the end of the TLS index list, with person detectors and waiting-area counts (§3.1).
 6. **Neighbour coordination and spillback.**
-   - Max-pressure's downstream term gives this for free between adjacent intersections, if the downstream link is modelled with an E2 detector.
+   - Max-pressure's downstream term could give this between adjacent intersections if the downstream link were modelled with an E2 detector. As built, the Controller reads only its own exit lanes and not its Neighbours.
    - Add an explicit guard rule: no green into a link whose downstream jam exceeds X% of storage.
    - Capacity-aware pressure handles the finite-storage case (§3.2).
 7. **Web client.** Nothing to reuse anywhere in this research. Build it fresh with React + Vite + MapLibre GL over OSM tiles, with junction positions taken from the SUMO net (`sumolib` gives lon/lat). MapLibre and sumolib were not researched here.

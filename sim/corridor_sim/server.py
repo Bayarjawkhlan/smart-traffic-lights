@@ -25,6 +25,7 @@ from .model import Site
 logger = logging.getLogger(__name__)
 
 FRAME_INTERVAL = 0.1
+MAX_LAG = 0.5
 SPEEDS = (0.5, 1, 2, 5, 10)
 
 
@@ -33,6 +34,7 @@ class Runner:
         self.sim = Simulation()
         self.speed = 1.0
         self.paused = False
+        self.deadline: float | None = None
         self.commands: queue.Queue[tuple[Callable[[], Any], Future]] = queue.Queue()
         self.clients: set[asyncio.Queue[str]] = set()
         self.loop: asyncio.AbstractEventLoop | None = None
@@ -48,6 +50,10 @@ class Runner:
         future: Future = Future()
         self.commands.put((fn, future))
         return future.result(timeout=30)
+
+    def restart(self, scenario: str) -> None:
+        self.sim.start(scenario=scenario)
+        self.deadline = None
 
     def state(self) -> dict:
         caps = self.sim.settings.caps
@@ -72,12 +78,24 @@ class Runner:
             except Exception as error:
                 future.set_exception(error)
 
+    def _pace(self, started: float, step: float, speed_changed: bool) -> None:
+        # time.sleep overshoots; a running deadline lets the next step make up for it.
+        base = started if self.deadline is None or speed_changed else self.deadline
+        self.deadline = base + step
+        ahead = self.deadline - time.monotonic()
+        if ahead > 0:
+            time.sleep(ahead)
+        elif -ahead > MAX_LAG:
+            self.deadline = None
+
     def _run(self) -> None:
         self.sim.start()
         next_frame = 0.0
+        paced_speed = self.speed
         while not self.stop.is_set():
             self._drain_commands()
             if self.paused:
+                self.deadline = None
                 if time.monotonic() >= next_frame:
                     next_frame = time.monotonic() + 0.5
                     self._publish(self.sim.frame())
@@ -85,6 +103,7 @@ class Runner:
                 continue
             started = time.monotonic()
             if self.sim.finished or self.sim.t >= scenarios()[self.sim.scenario]["duration"]:
+                self.deadline = None
                 try:
                     self.sim.start()
                 except ScenarioError:
@@ -97,9 +116,9 @@ class Runner:
             if time.monotonic() >= next_frame:
                 next_frame = time.monotonic() + FRAME_INTERVAL
                 self._publish(self.sim.frame())
-            budget = config.STEP_LENGTH / self.speed - (time.monotonic() - started)
-            if budget > 0:
-                time.sleep(budget)
+            speed = self.speed
+            self._pace(started, config.STEP_LENGTH / speed, speed != paced_speed)
+            paced_speed = speed
         self.sim.close()
 
     def _publish(self, frame: dict) -> None:
@@ -223,7 +242,7 @@ def control(command: Control) -> dict:
 
 def _start(scenario: str) -> None:
     try:
-        runner.call(lambda: runner.sim.start(scenario=scenario))
+        runner.call(lambda: runner.restart(scenario))
     except ScenarioError as error:
         raise HTTPException(500, str(error)) from error
 
