@@ -3,7 +3,7 @@
 verdict: changes
 
 Evidence root, written below as `$E`:
-`/private/tmp/claude-501/-Users-bayarjavkhlan-Documents-projects-smart-traffic-lights/d77269f2-c61b-4a13-8d38-5db4e2a5003e/scratchpad/ui-r1`
+`<scratchpad>/ui-r1`
 
 Checked in headless Chromium at 1440x900 and 390x844 (DPR 2, touch), dark only (the app has no light theme), English
 and Mongolian: 8 Corridors, All sites, three selected sites, all 15 schematics (English), Experiments, About, legend

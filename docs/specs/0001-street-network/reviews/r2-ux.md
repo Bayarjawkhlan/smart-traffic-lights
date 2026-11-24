@@ -1,7 +1,7 @@
 # ux review, round 2
 verdict: pass
 
-Reviewed 3bc3d82. No blockers or majors. Screenshots are in `/private/tmp/claude-501/-Users-bayarjavkhlan-Documents-projects-smart-traffic-lights/d77269f2-c61b-4a13-8d38-5db4e2a5003e/scratchpad/ux2/`, called `ux2/` below.
+Reviewed 3bc3d82. No blockers or majors. Screenshots are in `<scratchpad>/ux2/`, called `ux2/` below.
 
 ## Round 1 majors
 

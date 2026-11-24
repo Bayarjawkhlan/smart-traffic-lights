@@ -1,6 +1,6 @@
 # 0001: A Network of Signal Sites beyond Peace Avenue
 
-Date: 2026-11-24 · Status: Approved (user accepted every grill recommendation and asked to build) · Ledger: [factory.md](factory.md)
+Date: 2026-11-24 · Status: Implemented on factory/street-network, awaiting user review · Ledger: [factory.md](factory.md)
 
 ## Summary
 

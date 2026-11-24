@@ -3,7 +3,7 @@
 verdict: pass
 
 Evidence root, written below as `$E`:
-`/private/tmp/claude-501/-Users-bayarjavkhlan-Documents-projects-smart-traffic-lights/d77269f2-c61b-4a13-8d38-5db4e2a5003e/scratchpad/ui-r2`
+`<scratchpad>/ui-r2`
 
 Checked at 3bc3d82 in headless Chromium at 1440x900 and 390x844 (DPR 2, touch), English and Mongolian: 8 Corridors and
 All sites, every site selected from every Corridor it is in, 15 schematics, Experiments, Operator mode, keyboard focus,

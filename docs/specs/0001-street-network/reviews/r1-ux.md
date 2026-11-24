@@ -1,7 +1,7 @@
 # ux review, round 1
 verdict: changes
 
-Screenshots are in `/private/tmp/claude-501/-Users-bayarjavkhlan-Documents-projects-smart-traffic-lights/d77269f2-c61b-4a13-8d38-5db4e2a5003e/scratchpad/ux/`, called `ux/` below. "Introduced" and "pre-existing" are relative to `feat/corridor-demo`.
+Screenshots are in `<scratchpad>/ux/`, called `ux/` below. "Introduced" and "pre-existing" are relative to `feat/corridor-demo`.
 
 ## Findings
 

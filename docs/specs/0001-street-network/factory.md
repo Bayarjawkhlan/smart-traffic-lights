@@ -2,7 +2,7 @@
 spec: docs/specs/0001-street-network/index.md
 branch: factory/street-network   worktree: ../smart-traffic-lights-factory-street-network (sibling of the main checkout)   base: feat/corridor-demo (local, unpushed, 9ada9d0)
 ship policy: none chosen (user asleep): no push, no PR, no merge; stop at a finished local branch
-stage: approve
+stage: done (local branch; not pushed)
 round: 2
 pr:
 ## Log
@@ -30,4 +30,5 @@ pr:
 - 2026-11-24 incident: the code reviewer ran `pkill -f corridor_sim.server`, which killed the other reviewers' test servers. The user's three Docker containers are stopped; they finished at 02:50 UTC, before the first agent pkill (03:05 UTC), and no agent ran a Docker stop. Left as found.
 - 2026-11-24 fix round 1 (3bc3d82): client majors fixed; names take no pointer events and hide rather than cover a pin, Corridor pins numbered, schematic hull per site; builder reports 576 label states and 540 taps clean. Review round 2 started (ux, ui, code on the fix diff).
 - 2026-11-24 review round 2 (3bc3d82): ux pass, ui pass, code pass (minors listed in the review files). Security pass at round 1, no change since touches it.
-- 2026-11-24 approval round 1 (efd3bbe): changes. Required: README pedestrian-cap claim (3 of 15 runs had people standing over 90 s through crowding) and About cap wording. Fixed by rewording; the red-throughout check finds nobody over 90 s in all 15 new runs (longest 78 s); crowding counts given as ranges. Screenshots retaken.
+- 2026-11-24 approval round 1 (efd3bbe): changes. Required: README pedestrian-cap claim (3 of 15 runs had people standing over 90 s through crowding) and About cap wording. Fixed by rewording; the red-throughout check finds nobody over 90 s in all 15 new runs (longest 79 s); crowding counts given as ranges. Screenshots retaken.
+- 2026-11-24 approval round 2 (8a96d8f): approve, risk human. Done as a local branch: not pushed, no PR, no merge, worktree kept.
