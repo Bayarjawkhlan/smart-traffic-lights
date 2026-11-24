@@ -194,9 +194,9 @@ const en = {
   aboutGuardBody:
     "No Controller ever sets a light. The Safety Guard approves, delays or replaces every proposal, and it alone changes signals. It enforces minimum green, amber, all-red and pedestrian clearance times, and every Override is logged with the rule that forced it.",
   aboutCapsTitle: "The caps",
-  aboutCapsPed: "Pedestrians never wait longer than {n} s (Hard Cap).",
+  aboutCapsPed: "Pedestrians: Hard Cap {n} s. The Safety Guard works to give green before anyone has gone that long without it.",
   aboutCapsSoft: "Vehicles: Soft Cap {n} s, extended while the Approach's exit has Spillback, because releasing cars into a full road blocks the junction.",
-  aboutCapsHard: "Vehicles: Hard Cap {n} s, never exceeded for any reason.",
+  aboutCapsHard: "Vehicles: Hard Cap {n} s. The Safety Guard works to give green before an Approach has gone that long without it.",
   aboutHonestTitle: "What this is not",
   aboutHonestBody:
     "It is a simulation, not a pilot on real signals. Demand is generated from Scenarios tuned to look plausible, so results compare Controllers with each other, not with reality. The camera page shows vision on recorded video; it does not feed the simulation.",
@@ -417,9 +417,9 @@ const mn: Dictionary = {
   aboutGuardBody:
     "Ямар ч удирдлага гэрлийг өөрөө асаадаггүй. Аюулгүй байдлын хамгаалалт санал бүрийг зөвшөөрөх, хойшлуулах эсвэл солих бөгөөд зөвхөн тэр гэрлийг сольдог. Хамгийн бага ногоон, шар, бүгд улаан, явган хүний чөлөөлөлтийн хугацааг мөрдүүлж, албадлага бүрийг ямар дүрмээр хийснийг бүртгэнэ.",
   aboutCapsTitle: "Хязгаарууд",
-  aboutCapsPed: "Явган хүн {n} секундээс удаан хүлээхгүй (хатуу хязгаар).",
+  aboutCapsPed: "Явган хүн: хатуу хязгаар {n} с. Аюулгүй байдлын хамгаалалт хэн ч ногоон гэрэлгүй ийм удаан хүлээхээс өмнө ногоон өгөхийг зорьдог.",
   aboutCapsSoft: "Машин: зөөлөн хязгаар {n} с; гарах зам түгжирсэн үед сунгагдана, учир нь дүүрсэн зам руу машин оруулбал уулзвар хаагдана.",
-  aboutCapsHard: "Машин: хатуу хязгаар {n} с, ямар ч шалтгаанаар давахгүй.",
+  aboutCapsHard: "Машин: хатуу хязгаар {n} с. Аюулгүй байдлын хамгаалалт аль ч чиглэл ногоон гэрэлгүй ийм удаан хүлээхээс өмнө ногоон өгөхийг зорьдог.",
   aboutHonestTitle: "Энэ юу биш вэ",
   aboutHonestBody:
     "Энэ бол симуляц, бодит гэрлэн дохион дээрх туршилт биш. Хөдөлгөөний ачааллыг бодитой харагдахаар тохируулсан сценариудаас үүсгэдэг тул үр дүн нь удирдлагуудыг хоорондоо харьцуулна, бодит байдалтай биш. Камерын хуудас бичлэг дээрх хараа харуулна; симуляцад өгөгдөл өгдөггүй.",
