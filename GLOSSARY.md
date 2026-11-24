@@ -1,15 +1,19 @@
 # Smart Traffic Signals
 
-A simulated, AI-controlled corridor of signalised intersections in central Ulaanbaatar, serving vehicles and pedestrians under hard safety rules.
+A simulated, AI-controlled Network of signalised intersections in central Ulaanbaatar, serving vehicles and pedestrians under hard safety rules.
 
 ## Road network
 
+**Network**:
+The connected set of Signal Sites and streets the system controls and shows, part of the city rather than all of it.
+_Avoid_: Area, zone, map, grid
+
 **Corridor**:
-The connected set of Signal Sites the system controls and shows, a single stretch of road rather than the whole city.
-_Avoid_: Area, zone, map
+One continuous street through the Network with two or more Signal Sites on it, even where the street changes name. A Signal Site can belong to two Corridors.
+_Avoid_: Line, axis, route
 
 **Signal Site**:
-Any place in the Corridor where signals control traffic: an Intersection or a Mid-block Crossing.
+Any place in the Network where signals control traffic: an Intersection or a Mid-block Crossing.
 _Avoid_: Light, junction, node
 
 **Intersection**:
