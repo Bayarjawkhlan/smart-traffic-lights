@@ -19,15 +19,14 @@ def _capacity(site: Site, lane: str) -> float:
 
 class MaxPressureController(Controller):
     name = "max-pressure"
-    label = "Max-pressure (coordinates with neighbours)"
+    label = "Max-pressure (queues against exit roads)"
 
     def pressures(self, site: Site, view: SiteView) -> list[float]:
         result = []
         for phase in site.phases:
             pressure = 0.0
             seen: set[tuple[str, str]] = set()
-            for index in phase.green:
-                link = site.links[index]
+            for link in site.green_links(phase):
                 if link.pedestrian:
                     if link.crosswalk:
                         waiting = view.crosswalk_waiting.get(link.crosswalk, 0)

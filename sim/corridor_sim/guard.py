@@ -52,7 +52,7 @@ class SafetyGuard:
 
     def min_green(self, phase: Phase, site: Site) -> float:
         t = self.settings.timings
-        has_crosswalk = any(site.links[i].pedestrian for i in phase.green)
+        has_crosswalk = any(link.pedestrian for link in site.green_links(phase))
         return max(t.min_green, t.pedestrian_walk) if has_crosswalk else t.min_green
 
     def decide(self, site: Site, view: SiteView, proposal: int) -> Override | None:
@@ -107,7 +107,7 @@ class SafetyGuard:
         old = site.phases[signals.phase]
         new = site.phases[target]
         leaving = old.green - new.green
-        leaving_peds = {i for i in leaving if site.links[i].pedestrian}
+        leaving_peds = {i for i in leaving if any(link.pedestrian for link in site.links_by_index.get(i, ()))}
         leaving_cars = leaving - leaving_peds
 
         state = list(old.state)

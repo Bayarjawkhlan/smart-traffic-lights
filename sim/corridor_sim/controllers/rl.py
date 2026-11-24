@@ -2,15 +2,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import time
 
 import numpy as np
 
 from .. import config
-from ..model import Site
+from ..model import Site, network_hash
 from ..sensing import SiteView
 from .base import Controller
 from .max_pressure import MaxPressureController
+
+logger = logging.getLogger(__name__)
 
 MODEL_FILE = config.MODEL_DIR / "rl-linear.json"
 DECISION_INTERVAL = 5.0
@@ -32,8 +35,7 @@ def features(site: Site, view: SiteView, phase_index: int, pressure: float) -> n
     upstream = 0
     spill = 0
     lanes_seen: set[str] = set()
-    for index in phase.green:
-        link = site.links[index]
+    for link in site.green_links(phase):
         if link.pedestrian or link.from_lane in lanes_seen:
             continue
         lanes_seen.add(link.from_lane)
@@ -64,13 +66,21 @@ def features(site: Site, view: SiteView, phase_index: int, pressure: float) -> n
     )
 
 
+def load_weights() -> np.ndarray:
+    model = json.loads(MODEL_FILE.read_text())
+    trained_on = model.get("network")
+    if trained_on != network_hash():
+        logger.warning("%s does not match the current network (trained on: %s)", MODEL_FILE.name, trained_on or "not recorded")
+    return np.array(model["weights"])
+
+
 class RLController(Controller):
     name = "rl"
     label = "Reinforcement learning (trained in simulation)"
 
     def __init__(self, weights: np.ndarray | None = None) -> None:
         if weights is None:
-            weights = np.array(json.loads(MODEL_FILE.read_text())["weights"])
+            weights = load_weights()
         self.weights = weights
         self._pressure = MaxPressureController()
         self._last: dict[str, tuple[float, int]] = {}
@@ -124,6 +134,7 @@ def evaluate(job: tuple[list[float], str, int, float]) -> float:
 def train(iterations: int, population: int, duration: float, scenarios: list[str], workers: int) -> None:
     from multiprocessing import get_context
 
+    network = network_hash()
     rng = np.random.default_rng(0)
     mean = np.zeros(len(FEATURES))
     mean[FEATURES.index("pressure")] = 1.0
@@ -153,7 +164,7 @@ def train(iterations: int, population: int, duration: float, scenarios: list[str
             print(f"iter {iteration:2d} {picked} best={scores[order[0]]:6.1f} mean={np.mean(scores):6.1f} incumbent={scores[0]:6.1f} ({time.time() - started:.0f}s)", flush=True)
     config.MODEL_DIR.mkdir(parents=True, exist_ok=True)
     MODEL_FILE.write_text(
-        json.dumps({"method": "cross-entropy policy search", "features": FEATURES, "weights": [round(float(w), 4) for w in mean], "history": history}, indent=2)
+        json.dumps({"method": "cross-entropy policy search", "network": network, "features": FEATURES, "weights": [round(float(w), 4) for w in mean], "history": history}, indent=2)
     )
     print("weights", dict(zip(FEATURES, np.round(mean, 3))))
 

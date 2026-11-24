@@ -13,7 +13,7 @@ from .config import Settings
 from .controllers import CONTROLLERS, make, register_rl
 from .controllers.base import Controller
 from .guard import Override, SafetyGuard
-from .model import Site, load_sites
+from .model import Approach, Site, load_sites
 from .sensing import SiteView, edge_congestion, measure_lanes, waiting_persons
 
 register_rl()
@@ -25,9 +25,22 @@ def scenarios() -> dict[str, dict]:
     return json.loads((config.SCENARIO_DIR / "scenarios.json").read_text())
 
 
+class ScenarioError(Exception):
+    pass
+
+
+@dataclass(frozen=True)
+class Incident:
+    site: Site
+    approach: Approach
+    start: float
+    end: float
+
+
 @dataclass
 class Metrics:
     vehicle_wait_seconds: float = 0.0
+    vehicle_max_wait: float = 0.0
     departed: int = 0
     arrived: int = 0
     teleports: int = 0
@@ -42,6 +55,7 @@ class Metrics:
         return {
             "t": round(t, 1),
             "avgVehicleWait": round(self.vehicle_wait_seconds / max(self.departed, 1), 1),
+            "maxVehicleWait": round(self.vehicle_max_wait, 1),
             "vehiclesPerHour": round(self.arrived / hours),
             "avgPedestrianWait": round(sum(peds) / len(peds), 1) if peds else 0.0,
             "maxPedestrianWait": round(self.pedestrian_max_wait, 1),
@@ -86,7 +100,7 @@ class Simulation:
         self._next_control = 0.0
         self._next_congestion = 0.0
         self._seen_waiting: set[str] = set()
-        self._scenario_meta: dict = {}
+        self._incident: Incident | None = None
         self._short_ids: dict[str, int] = {}
 
     def _fit_affine(self) -> np.ndarray:
@@ -103,10 +117,13 @@ class Simulation:
         return np.hstack([xy, np.ones((len(xy), 1))]) @ self._affine
 
     def start(self, scenario: str | None = None, controller: str | None = None, seed: int = 42) -> None:
+        name = scenario or self.scenario
+        meta = scenarios()[name]
+        # Before traci.close(): a bad Scenario must leave the running simulation intact.
+        incident = self._resolve_incident(name, meta.get("incident"))
         if self.running:
             traci.close()
-        if scenario:
-            self.scenario = scenario
+        self.scenario = name
         if controller:
             self.controller = make(controller)
         self.controller.attach(self.views)
@@ -122,11 +139,11 @@ class Simulation:
                 "--no-step-log",
                 "--no-warnings",
                 "--seed", str(seed),
-                "--end", str(scenarios()[self.scenario]["duration"]),
+                "--end", str(meta["duration"]),
             ]
         )
         self.running = True
-        self._scenario_meta = scenarios()[self.scenario]
+        self._incident = incident
         self._seen_waiting = set()
         self._short_ids = {}
         self.t = 0.0
@@ -146,6 +163,19 @@ class Simulation:
         self._next_congestion = 0.0
         for site in self.sites:
             traci.trafficlight.setRedYellowGreenState(site.tls, self.guard.signals[site.id].state)
+
+    def _resolve_incident(self, scenario: str, spec: dict | None) -> Incident | None:
+        if not spec:
+            return None
+        site = self.site_by_id.get(spec["site"])
+        if site is None:
+            raise ScenarioError(f"Scenario {scenario}: incident names unknown Signal Site {spec['site']!r}")
+        matches = [a for a in site.approaches if a.id == spec["approach"]]
+        if len(matches) != 1:
+            raise ScenarioError(
+                f"Scenario {scenario}: incident Approach id {spec['approach']!r} matches {len(matches)} Approaches at {site.id}, expected 1"
+            )
+        return Incident(site, matches[0], spec["start"], spec["end"])
 
     def close(self) -> None:
         if self.running:
@@ -215,16 +245,14 @@ class Simulation:
             self.congestion = edge_congestion(self._road_edges, self.settings.thresholds)
 
     def _scripted_incident(self) -> None:
-        incident = self._scenario_meta.get("incident")
+        incident = self._incident
         if not incident or self.t % 5 != 0:
             return
-        site = self.site_by_id[incident["site"]]
-        approach = next(a for a in site.approaches if a.label == incident["approach"])
-        blocked = approach.id in self.blocked_lanes
-        if incident["start"] <= self.t < incident["end"] and not blocked:
-            self.toggle_block(site.id, approach.id)
-        elif self.t >= incident["end"] and blocked:
-            self.toggle_block(site.id, approach.id)
+        blocked = incident.approach.id in self.blocked_lanes
+        if incident.start <= self.t < incident.end and not blocked:
+            self.toggle_block(incident.site.id, incident.approach.id)
+        elif self.t >= incident.end and blocked:
+            self.toggle_block(incident.site.id, incident.approach.id)
 
     def _control(self) -> None:
         thresholds = self.settings.thresholds
@@ -249,6 +277,7 @@ class Simulation:
                     self.approach_since[key] = self.t
                 since = self.approach_since.get(key)
                 approach_wait[approach.id] = self.t - since if since is not None else 0.0
+                self.metrics.vehicle_max_wait = max(self.metrics.vehicle_max_wait, approach_wait[approach.id])
                 exits = [lane for lane in approach.exit_lanes if not lane.startswith(":")]
                 approach_spill[approach.id] = bool(exits) and sum(lane in spill for lane in exits) * 2 > len(exits)
                 spill_total += sum(lane in spill for lane in exits)

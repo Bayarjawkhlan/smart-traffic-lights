@@ -8,9 +8,11 @@ from datetime import datetime, timezone
 from . import config
 from .controllers import CONTROLLERS
 from .engine import Simulation, scenarios
+from .model import network_hash
 
 
 def run(scenario: str, controllers: list[str], duration: float, seed: int) -> dict:
+    network = network_hash()
     sim = Simulation()
     results = {}
     for name in controllers:
@@ -26,6 +28,7 @@ def run(scenario: str, controllers: list[str], duration: float, seed: int) -> di
         "label": scenarios()[scenario]["label"],
         "duration": duration,
         "seed": seed,
+        "network": network,
         "finishedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "results": results,
     }

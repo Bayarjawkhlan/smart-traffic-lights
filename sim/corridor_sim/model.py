@@ -1,14 +1,15 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from dataclasses import dataclass, field
+from functools import cached_property
 
 import sumolib
 
 from . import config
-from .phases import PhasePlanner
+from .phases import MAX_PHASES, PhasePlanner
 
-MAX_SUMO_PHASES = 3
 PLANNED_PHASE_SECONDS = 35.0
 
 GREEN = frozenset("Gg")
@@ -66,6 +67,16 @@ class Site:
     crosswalks: tuple[Crosswalk, ...]
     lane_lengths: dict[str, float] = field(default_factory=dict)
 
+    @cached_property
+    def links_by_index(self) -> dict[int, tuple[Link, ...]]:
+        result: dict[int, tuple[Link, ...]] = {}
+        for link in self.links:
+            result[link.index] = (*result.get(link.index, ()), link)
+        return result
+
+    def green_links(self, phase: Phase) -> list[Link]:
+        return [link for index in sorted(phase.green) for link in self.links_by_index.get(index, ())]
+
     def phases_serving_approach(self, approach: Approach) -> list[Phase]:
         return [p for p in self.phases if p.green & set(approach.links)]
 
@@ -89,10 +100,46 @@ def _candidate_phases(program_phases: list) -> list[Phase]:
 
 def _phases(net: sumolib.net.Net, tls_id: str, program, approaches: list[Approach], crosswalks: list[Crosswalk]) -> list[Phase]:
     phases = _candidate_phases(program.getPhases())
-    if len(phases) <= MAX_SUMO_PHASES:
+    if len(phases) <= MAX_PHASES:
         return phases
     states = PhasePlanner(net, tls_id).plan([set(a.links) for a in approaches], [set(c.links) for c in crosswalks])
     return [Phase(i, state, PLANNED_PHASE_SECONDS) for i, state in enumerate(states)]
+
+
+def validate_sites(sites: list[Site]) -> list[str]:
+    problems: list[str] = []
+    tls_sites: dict[str, str] = {}
+    for site in sites:
+        if site.tls in tls_sites:
+            problems.append(f"{site.id}: traffic light {site.tls} is already used by {tls_sites[site.tls]}")
+        tls_sites.setdefault(site.tls, site.id)
+        if not site.phases:
+            problems.append(f"{site.id}: no Phase")
+            continue
+        if len(site.phases) > MAX_PHASES:
+            problems.append(f"{site.id}: {len(site.phases)} Phases, at most {MAX_PHASES} allowed")
+        for approach in site.approaches:
+            if not site.phases_serving_approach(approach):
+                problems.append(f"{site.id}: no Phase serves Approach {approach.label} ({approach.id})")
+        for crosswalk in site.crosswalks:
+            if not site.phases_serving_crosswalk(crosswalk):
+                problems.append(f"{site.id}: no Phase serves {crosswalk.label} ({crosswalk.id})")
+        green = frozenset().union(*(phase.green for phase in site.phases))
+        for index, links in site.links_by_index.items():
+            if index not in green and not all(link.pedestrian for link in links):
+                problems.append(f"{site.id}: no Phase makes vehicle signal {index} green ({links[0].from_lane} to {links[0].to_lane})")
+    return problems
+
+
+def network_hash() -> str:
+    return hashlib.sha256(config.NET_FILE.read_bytes()).hexdigest()
+
+
+def _walking_areas(net: sumolib.net.Net, crossing_links: list[Link]) -> set[str]:
+    # SUMO signals a crossing from one kerb only, but people wait at both.
+    near = {net.getLane(link.from_lane).getEdge().getID() for link in crossing_links}
+    far = {conn.getToLane().getEdge().getID() for link in crossing_links for conn in net.getLane(link.to_lane).getOutgoing()}
+    return near | far
 
 
 def load_sites(net: sumolib.net.Net | None = None) -> tuple[sumolib.net.Net, list[Site]]:
@@ -139,7 +186,7 @@ def load_sites(net: sumolib.net.Net | None = None) -> tuple[sumolib.net.Net, lis
                     id=crosswalk_id,
                     label=info["label"],
                     links=tuple(link.index for link in own),
-                    walking_areas=tuple(sorted({link.from_lane.rsplit("_", 1)[0] for link in own})),
+                    walking_areas=tuple(sorted(_walking_areas(net, own))),
                 )
             )
 

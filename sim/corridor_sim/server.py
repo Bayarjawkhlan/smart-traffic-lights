@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import os
 import queue
 import subprocess
@@ -18,7 +19,10 @@ from pydantic import BaseModel, Field
 
 from . import config, explain
 from .controllers import CONTROLLERS
-from .engine import Simulation, scenarios
+from .engine import ScenarioError, Simulation, scenarios
+from .model import Site
+
+logger = logging.getLogger(__name__)
 
 FRAME_INTERVAL = 0.1
 SPEEDS = (0.5, 1, 2, 5, 10)
@@ -81,8 +85,14 @@ class Runner:
                 continue
             started = time.monotonic()
             if self.sim.finished or self.sim.t >= scenarios()[self.sim.scenario]["duration"]:
-                self.sim.start()
+                try:
+                    self.sim.start()
+                except ScenarioError:
+                    logger.exception("cannot restart the Scenario, simulation paused")
+                    self.paused = True
                 self._broadcast(json.dumps(self.state()))
+                if self.paused:
+                    continue
             self.sim.step()
             if time.monotonic() >= next_frame:
                 next_frame = time.monotonic() + FRAME_INTERVAL
@@ -124,7 +134,7 @@ async def lifespan(_: FastAPI):
     runner.thread.join(timeout=5)
 
 
-app = FastAPI(title="Peace Avenue corridor simulation", lifespan=lifespan)
+app = FastAPI(title="Ulaanbaatar signal network", lifespan=lifespan)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=os.environ.get("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(","),
@@ -184,9 +194,9 @@ def control(command: Control) -> dict:
         case "scenario":
             if command.name not in scenarios():
                 raise HTTPException(404, "unknown scenario")
-            runner.call(lambda: sim.start(scenario=command.name))
+            _start(command.name)
         case "restart":
-            runner.call(lambda: sim.start())
+            _start(sim.scenario)
         case "controller":
             if command.name not in CONTROLLERS:
                 raise HTTPException(404, "unknown controller")
@@ -211,6 +221,13 @@ def control(command: Control) -> dict:
     return state
 
 
+def _start(scenario: str) -> None:
+    try:
+        runner.call(lambda: runner.sim.start(scenario=scenario))
+    except ScenarioError as error:
+        raise HTTPException(500, str(error)) from error
+
+
 def _set_caps(ped: float, soft: float, hard: float) -> None:
     caps = runner.sim.settings.caps
     caps.pedestrian_hard, caps.vehicle_soft, caps.vehicle_hard = ped, soft, hard
@@ -222,6 +239,27 @@ def _require(site: str | None, target: str | None, kind: str) -> None:
         raise HTTPException(400, "site and target are required")
     if target not in {item.id for item in getattr(runner.sim.site_by_id[site], kind)}:
         raise HTTPException(404, f"unknown {kind[:-1]} at {site}")
+
+
+DIRECTIONS_MN = {"northbound": "хойш", "southbound": "урагш", "eastbound": "зүүн тийш", "westbound": "баруун тийш"}
+
+
+def _labels(site: Site, language: str) -> dict[str, str]:
+    labels = {item.id: item.label for item in (*site.approaches, *site.crosswalks)}
+    if language != "mn":
+        return labels
+    info = next(s for s in json.loads(config.SITES_FILE.read_text()) if s["id"] == site.id)
+    for approach in info["approaches"]:
+        direction = approach.get("direction") or approach["label"].rsplit(" ", 1)[-1]
+        labels[approach["id"]] = f"{approach['street'] or 'Туслах зам'}, {DIRECTIONS_MN[direction]}"
+    for crosswalk in info["crosswalks"]:
+        if "streets" in crosswalk:
+            labels[crosswalk["id"]] = "Явган гарц: " + (" / ".join(s["mn"] for s in crosswalk["streets"]) or "зам")
+    return labels
+
+
+def _site_name(site: Site, language: str) -> str:
+    return site.name_mn if language == "mn" else site.name_en
 
 
 class ExplainRequest(BaseModel):
@@ -239,14 +277,11 @@ def explain_site(request: ExplainRequest) -> dict:
         site = sim.site_by_id[request.site]
         states = {s["id"]: s for s in sim.site_states()}
         current = states[site.id]
-        labels = {a.id: a.label for a in site.approaches} | {c.id: c.label for c in site.crosswalks}
-        if request.language == "mn":
-            streets = {a["id"]: a["street"] for s in json.loads(config.SITES_FILE.read_text()) if s["id"] == site.id for a in s["approaches"]}
-            labels |= {aid: f"{street} ({labels[aid].rsplit(' ', 1)[-1]})" for aid, street in streets.items() if street}
+        labels = _labels(site, request.language)
         phases = sim.describe()["sites"]
         phase_info = next(p for p in phases if p["id"] == site.id)["phases"]
         return {
-            "site": site.name_mn if request.language == "mn" else site.name_en,
+            "site": _site_name(site, request.language),
             "controller": sim.controller.label,
             "time": round(sim.t, 1),
             "stage": current["stage"],
@@ -258,7 +293,7 @@ def explain_site(request: ExplainRequest) -> dict:
             "caps": current["caps"],
             "recentEvents": [e["text"] for e in sim.events if e.get("site") == site.id][-5:],
             "neighbours": [
-                {"site": sim.site_by_id[n].name_en, "queuedVehicles": sum(a["queue"] for a in states[n]["approaches"]), "spillbackApproaches": sum(a["spillback"] for a in states[n]["approaches"])}
+                {"site": _site_name(sim.site_by_id[n], request.language), "queuedVehicles": sum(a["queue"] for a in states[n]["approaches"]), "spillbackApproaches": sum(a["spillback"] for a in states[n]["approaches"])}
                 for n in site.neighbours
             ],
         }

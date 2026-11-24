@@ -14,7 +14,7 @@ class FixedTimeController(Controller):
     def propose(self, site: Site, view: SiteView) -> int:
         phase = site.phases[view.phase]
         duration = phase.default_duration
-        if all(site.links[i].pedestrian for i in phase.green):
+        if all(link.pedestrian for link in site.green_links(phase)):
             duration = max(duration, MIN_PEDESTRIAN_PHASE)
         if view.green_elapsed < duration:
             return view.phase
