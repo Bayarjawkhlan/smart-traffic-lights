@@ -1,41 +1,66 @@
-# Smart traffic lights for Peace Avenue, Ulaanbaatar
+# Ulaanbaatar signal network
 
-An open-source demo of AI traffic-signal control on a 1.3 km stretch of Peace Avenue (Энх тайваны өргөн чөлөө) in central Ulaanbaatar. It controls five Signal Sites, from the State Department Store to Baga Toiruu East, past the Central Post Office and Sükhbaatar Square. Vehicles and pedestrians are simulated on real road geometry from OpenStreetMap. Controllers decide which Phase goes green, and a Safety Guard makes sure nobody waits too long.
+An open-source demo of AI traffic-signal control in central Ulaanbaatar. It controls a Network of 15 Signal Sites on streets running east-west and north-south around Sükhbaatar Square: 14 Intersections and one Mid-block Crossing, at the State Department Store. Vehicles and pedestrians are simulated on real road geometry from OpenStreetMap. Controllers decide which Phase goes green, and a Safety Guard limits how long anyone waits.
 
-The words used here (Signal Site, Approach, Crosswalk, Phase, Spillback, Safety Guard and so on) are defined in [GLOSSARY.md](GLOSSARY.md). The big decisions are in [docs/adr](docs/adr).
+Fourteen of the sites lie on eight Corridors:
 
-![Live corridor map](docs/screenshots/live-map.png)
+| Corridor | Direction | Signal Sites |
+|---|---|---|
+| Peace Avenue | east-west | 5 |
+| Sambuu St | east-west | 4 |
+| Juulchny St | east-west | 2 |
+| Genden St | east-west | 2 |
+| Baga Toiruu West | north-south | 3 |
+| Sükhbaatar St – Chinggis Ave | north-south | 3 |
+| University St – Olympic St | north-south | 4 |
+| Baga Toiruu East | north-south | 2 |
+
+A site where two Corridors cross counts in both. Seoul St / Tserendorj St is in no Corridor. Other signals inside the area run fixed programs and are drawn grey.
+
+The words used here (Network, Corridor, Signal Site, Approach, Crosswalk, Phase, Spillback, Safety Guard and so on) are defined in [GLOSSARY.md](GLOSSARY.md). The big decisions are in [docs/adr](docs/adr).
+
+![Live map of the Network](docs/screenshots/live-map.png)
 
 ## How it decides
 
 - **The Controller proposes, the Safety Guard decides** ([ADR 0002](docs/adr/0002-controller-proposes-safety-guard-decides.md)). Three Controllers can be switched live:
   - **Fixed-time**: cycles Phases on a schedule, like most of the city today. This is the Baseline.
-  - **Max-pressure**: gives green where waiting queues most exceed the room on the roads they drain into. It looks at its Neighbours' queues, so it won't feed a Signal Site that is already jammed.
+  - **Max-pressure**: gives green to the Phase whose waiting vehicles most exceed the vehicles already on their exit roads. Each Signal Site decides from its own Approaches and exits; sites do not coordinate.
   - **RL**: a phase scorer trained in the simulation.
-- **Caps the Safety Guard enforces, whatever the Controller wants:**
-  - Pedestrians never wait more than **90 s**.
-  - A vehicle Approach waits at most **120 s**. The Guard may extend that while the Approach's exit has Spillback, but never past **180 s**.
+- **Caps the Safety Guard works to, whatever the Controller wants** (defaults; an Operator can change them):
+  - Pedestrians: Hard Cap **90 s**.
+  - A vehicle Approach: Soft Cap **120 s**, which the Guard may extend while the Approach's exit has Spillback, and Hard Cap **180 s**.
   - Min green, pedestrian walk and clearance, yellow and all-red always run.
   - Every Override is logged with the rule that forced it.
 - **Camera vision** (`vision/`) shows what a camera would feed the Controller: queued vehicles per Approach and waiting pedestrians per Crosswalk, measured on recorded street video. It is a showcase, and the simulation does not use it ([ADR 0001](docs/adr/0001-simulation-first-on-sumo.md)).
 
 ## Results
 
-These come from Experiment Mode: each Scenario runs for one hour, with the same traffic for every Controller (`sim/data/experiments/`). Each cell reads fixed-time → max-pressure → RL.
+These come from Experiment Mode: each Scenario runs for one hour, with the same traffic for every Controller (`sim/data/experiments/`, seed 42). Each cell reads Fixed-time → Max-pressure → RL.
 
-| Scenario | Avg vehicle wait | Avg pedestrian wait | Max pedestrian wait | Spillback minutes |
+| Scenario | Avg vehicle wait | Longest Approach wait | Avg pedestrian wait | Max pedestrian wait |
 |---|---|---|---|---|
-| Morning rush | 50.5 → 50.6 → 28.0 s | 24.8 → 17.9 → 16.2 s | 73 → 71 → 80 s | 63.8 → 136.5 → 24.0 |
-| Midday | 51.9 → 37.0 → 29.1 s | 26.9 → 19.6 → 15.9 s | 72 → 74 → 80 s | 60.4 → 38.5 → 37.1 |
-| Evening rush | 56.8 → 35.4 → 27.9 s | 25.4 → 19.6 → 16.3 s | 74 → 78 → 75 s | 98.0 → 45.4 → 25.4 |
-| Incident: lane blocked | 54.5 → 55.6 → 26.9 s | 27.3 → 19.8 → 16.5 s | 74 → 72 → 78 s | 83.3 → 130.6 → 24.9 |
-| Pedestrian surge | 47.8 → 46.1 → 29.8 s | 19.0 → 18.6 → 15.6 s | 73 → 79 → 80 s | 29.5 → 68.2 → 35.2 |
+| Morning rush | 54.9 → 49.5 → 44.5 s | 67 → 102 → 49 s | 21.1 → 15.3 → 13.1 s | 63 → 70 → 70 s |
+| Midday | 53.1 → 43.7 → 37.8 s | 67 → 106 → 55 s | 22.5 → 15.5 → 13.0 s | 63 → 72 → 73 s |
+| Evening rush | 63.3 → 53.5 → 48.3 s | 67 → 105 → 56 s | 21.2 → 15.5 → 12.8 s | 63 → 65 → 79 s |
+| Incident: lane blocked | 55.7 → 48.1 → 40.9 s | 67 → 100 → 50 s | 21.7 → 16.1 → 13.3 s | 63 → 64 → 76 s |
+| Pedestrian surge (event at the square) | 98.7 → 62.8 → 43.8 s | 67 → 99 → 46 s | 22.1 → 16.0 → 10.9 s | 63 → 71 → 73 s |
 
-- **RL** roughly halves the average vehicle wait against the Baseline, and cuts the average pedestrian wait by about a third.
-- **Max-pressure** clearly helps at midday and in the evening rush. In the morning rush and the incident it ties the Baseline on vehicle wait and builds more Spillback.
-- **The pedestrian cap held**: no run let a pedestrian wait more than 90 s.
+"Longest Approach wait" is the longest time any Approach with a Queue went without green. One vehicle can need more than one green, so it is not the longest wait of a single vehicle.
 
-Traffic demand is generated, not measured, so compare the Controllers with each other, not with real Peace Avenue.
+- **RL** has the lowest average vehicle wait, the lowest average pedestrian wait and the shortest Longest Approach wait in every Scenario. Against the Baseline it cuts the average vehicle wait by 19% to 56% and the average pedestrian wait by 38% to 51%.
+- **Max-pressure** comes second on both averages in every Scenario: 10% to 36% lower for vehicles, 26% to 31% lower for pedestrians. Its Longest Approach wait is the worst of the three, 48% to 58% longer than the Baseline, and the Safety Guard's vehicle Soft Cap forces most of its Overrides.
+- **Both are worse than the Baseline on the longest pedestrian wait** in every Scenario: 64 to 72 s for Max-pressure and 70 to 79 s for RL, against 63 s.
+- **Throughput barely changes.** Vehicles served per hour stay within 1% of the Baseline except in the pedestrian surge (Max-pressure +2%, RL +4%). In the morning rush both serve slightly fewer (3,742 and 3,733 against 3,753).
+- **Some vehicles get stuck.** SUMO removes a vehicle that has not moved for 300 s and puts it back further on (a teleport). That happened to at most 25 of 3,966 vehicles in a run. RL has more teleports than the Baseline at midday (13 against 9), in the evening rush (25 against 7) and in the incident (20 against 15); Max-pressure has more in the evening rush (17 against 7) and the pedestrian surge (17 against 16).
+
+**Caps.** All 15 runs stayed within the Hard Caps of 90 s for pedestrians and 180 s for Approaches: the longest waits were 79 s and 106 s. A randomised search at the default caps also found no breach. That is evidence, not proof. With the Operator's pedestrian cap at its minimum of 45 s, a 3-Phase Signal Site can breach the vehicle Hard Cap: a wait of 192 s was measured, and a Phase without a Crosswalk can be starved.
+
+**Earlier results.** Results published before the 15-site Network came from a sensor that saw waiting pedestrians at only one kerb of each Crosswalk, so the earlier claim that no pedestrian waited more than 90 s did not hold. A check of those 15 runs found 99 waits over 90 s in 14 of them, the longest 315 s where the metric said 71 s. Both kerbs are now sensed ([ledger](docs/specs/0001-street-network/factory.md)). The old numbers are for a different road network and must not be compared with this table.
+
+**Spillback** is 0.0 lane-minutes in every run, so it is not in the table. The earlier non-zero figures came from the road import: junctions left unjoined had exit lanes 0.2 to 7.1 m long, where a single car counted as a full road (in the old run that was traced, evening rush with Max-pressure, all 45.4 minutes were on such lanes). Those junctions are now joined and the shortest exit lane is 16.6 m. An exit lane counts as Spillback when it is 75% full; across the 15 runs the fullest reading was 78%, and all such readings in a run together rounded to 0.0 minutes. Only the first road segment after a site is measured, so 0.0 does not mean there are no queues. It does mean these runs hardly exercise the parts of the Safety Guard and the Controllers that react to Spillback.
+
+Traffic demand is generated, not measured, so compare the Controllers with each other, not with real traffic in Ulaanbaatar.
 
 ![Controllers compared](docs/screenshots/experiments.png)
 
@@ -60,10 +85,10 @@ With Docker, `docker compose up --build` starts all three (if your default build
 
 | Path | What |
 |---|---|
-| `sim/` | SUMO corridor model, Safety Guard, Controllers, live API, Experiment Mode, RL training. See [sim/README.md](sim/README.md) |
+| `sim/` | SUMO model of the Network, Safety Guard, Controllers, live API, Experiment Mode, RL training. See [sim/README.md](sim/README.md) |
 | `vision/` | YOLO vehicle and pedestrian counting on recorded video. See [vision/README.md](vision/README.md) |
 | `client/` | React + Vite web client: live map, Signal Site detail, Operator controls, experiments, vision. See [client/README.md](client/README.md) |
-| `docs/` | ADRs and research notes |
+| `docs/` | ADRs, specs and research notes |
 
 ## Data and licences
 

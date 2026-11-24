@@ -1,6 +1,6 @@
 # Client
 
-The web app for the Peace Avenue corridor demo: a live map of the simulated Corridor, a panel for each Signal Site, Operator controls, Controller comparisons from Experiment Mode, the camera vision showcase and a plain-language explanation of the system. UI text is in English and Mongolian. Terms follow [GLOSSARY.md](../GLOSSARY.md).
+The web app for the Ulaanbaatar signal network: a live map of the simulated Network of 15 Signal Sites, a picker for its eight Corridors, a panel for each Signal Site, Operator controls, Controller comparisons from Experiment Mode, the camera vision showcase and a plain-language explanation of the system. UI text is in English and Mongolian. Terms follow [GLOSSARY.md](../GLOSSARY.md).
 
 React 19, Vite, TypeScript (strict) and MapLibre GL JS. The basemap is OpenFreeMap's `dark` style (no key); map data © OpenStreetMap contributors.
 
@@ -54,20 +54,20 @@ docker run --rm -p 8080:80 stl-client
 
 ## Using it
 
-- **Live**: congestion on every road (free, slow, jammed), signal colours at stop lines and Crosswalks, vehicles and pedestrians. Click a Signal Site on the map or in the corridor strip at the bottom to open its panel: a live schematic, the current Phase and stage, the Controller's score for each Phase, every Approach and Crosswalk with its wait against the caps, and the site's events. The Explain button asks the simulation service for a language-model explanation (only when it has an OpenAI key).
+- **Live**: congestion on every road (free, slow, jammed), signal colours at stop lines and Crosswalks, vehicles and pedestrians. The strip at the bottom lists the Signal Sites of one Corridor, west to east or north to south; its picker offers the eight Corridors and "All sites" and starts on Peace Avenue. The map names the sites of the chosen Corridor where the names fit; with "All sites" it names a site when you hover, focus or select it. Click a Signal Site on the map or in the strip to open its panel: a live schematic, the current Phase and stage, the Controller's score for each Phase, every Approach and Crosswalk with its wait against the caps, and the site's events. The Explain button asks the simulation service for a language-model explanation (only when it has an OpenAI key).
 - **Operator** switch (top right, no login): change the Controller, Scenario, speed and caps, pause, restart, press a pedestrian button on a Crosswalk or block a lane on an Approach. Viewers see the same data read-only. The setting is remembered per browser.
-- **Experiments**: Controllers compared per Scenario, with the change against the Fixed-time baseline. Operators can start a run; the page polls until it finishes.
+- **Experiments**: Controllers compared per Scenario, including the Longest Approach wait, with the change against the Fixed-time baseline. Operators can start a run; the page polls until it finishes.
 - **Vision**: the annotated camera stream and zone counts from the vision service, with each clip's licence. The simulation does not use it.
 
-The event log only holds events that happened while the page was open; the simulation service does not replay older ones.
+When the page connects, the simulation service sends the recent events of the current run (200 at most), so the event log does not start empty.
 
 ## Layout
 
 ```
 src/
   api/        types, HTTP calls, the reconnecting live store (WebSocket)
-  map/        MapLibre engine: layers, per-frame updates, vehicle interpolation, site markers, legend
-  live/       Live page: metrics strip, Operator bar, corridor strip, Signal Site panel and schematic, event log
+  map/        MapLibre engine: layers, per-frame updates, vehicle interpolation, site markers and names, legend
+  live/       Live page: metrics strip, Operator bar, Corridor picker and strip, Signal Site panel and schematic, event log
   pages/      Experiments, Vision, About
   i18n/       EN/MN dictionary and localised names
   ui/, lib/   shared pieces
