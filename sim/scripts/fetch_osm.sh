@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-# Downloads the Peace Avenue corridor (State Department Store → Baga Toiruu east) from Overpass.
 set -euo pipefail
-BBOX="47.9128,106.9030,47.9218,106.9280"
+BBOX="47.9115,106.9030,47.9245,106.9280"
 OUT="$(dirname "$0")/../data/corridor.osm.xml"
 QUERY="[out:xml][timeout:90];
 (
