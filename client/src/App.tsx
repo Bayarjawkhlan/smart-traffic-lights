@@ -3,6 +3,7 @@ import { live, useLive, type Connection } from "./api/live";
 import { useI18n } from "./i18n/I18n";
 import type { StringKey } from "./i18n/strings";
 import { LivePage } from "./live/LivePage";
+import { useCorridor } from "./live/useCorridor";
 import { useRoute, type Page } from "./lib/useRoute";
 import { AboutPage } from "./pages/AboutPage";
 import { ExperimentsPage } from "./pages/ExperimentsPage";
@@ -36,7 +37,8 @@ export function App() {
   const { t, lang, setLang } = useI18n();
   const [route, navigate] = useRoute();
   const [operator, setOperator] = useState(readOperator);
-  const { connection, state } = useLive();
+  const { connection, network, state } = useLive();
+  const corridor = useCorridor(network, route.site);
 
   useEffect(() => live.start(), []);
 
@@ -117,6 +119,7 @@ export function App() {
         {route.page === "live" && (
           <LivePage
             operator={operator}
+            corridor={corridor}
             selectedSite={route.site}
             onSelectSite={(site) => navigate({ page: "live", site })}
           />

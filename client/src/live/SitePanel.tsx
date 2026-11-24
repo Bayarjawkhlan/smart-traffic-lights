@@ -2,7 +2,7 @@ import { useMemo, useState } from "react";
 import type { LiveSnapshot } from "../api/live";
 import type { Network, PhaseInfo, SiteFrame, SiteInfo } from "../api/types";
 import { useI18n, type I18n } from "../i18n/I18n";
-import { approachLabel, crosswalkLabel, siteName, siteSecondaryName, streetNames, uniqueLabels } from "../i18n/names";
+import { approachLabel, crosswalkLabel, siteName, siteSecondaryName, uniqueLabels } from "../i18n/names";
 import { num } from "../lib/format";
 import { CapRail } from "../ui/CapRail";
 import { Icon } from "../ui/Icon";
@@ -41,10 +41,7 @@ export function SitePanel({ network, site, snapshot, operator, onClose }: Props)
   const caps = state?.caps ?? snapshot.state?.caps;
 
   const approachNames = useMemo(() => uniqueLabels(site.approaches, (a) => approachLabel(a, i18n)), [site, i18n]);
-  const crosswalkNames = useMemo(() => {
-    const streets = streetNames(site);
-    return uniqueLabels(site.crosswalks, (c) => crosswalkLabel(c, streets, i18n));
-  }, [site, i18n]);
+  const crosswalkNames = useMemo(() => uniqueLabels(site.crosswalks, (c) => crosswalkLabel(c, i18n)), [site, i18n]);
 
   const scores = state ? Object.entries(state.pressures).map(([k, v]) => [Number(k), v] as const) : [];
   const maxScore = Math.max(1e-6, ...scores.map(([, v]) => Math.abs(v)));
@@ -55,7 +52,7 @@ export function SitePanel({ network, site, snapshot, operator, onClose }: Props)
       <header className="site-panel__head">
         <button type="button" className="button button--ghost button--small" onClick={onClose}>
           <Icon name="back" />
-          {t("backToCorridor")}
+          {t("backToNetwork")}
         </button>
         <div className="site-panel__title">
           <span className="label">{t(site.kind === "midblock" ? "midblock" : "intersection")}</span>

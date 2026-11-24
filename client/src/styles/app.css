@@ -803,7 +803,6 @@ select {
   border: 0;
   background: none;
   cursor: pointer;
-  position: relative;
   display: grid;
   place-items: center;
 }
@@ -822,15 +821,23 @@ select {
 .site-marker__text {
   position: absolute;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translateX(var(--shift, -50%));
+  visibility: hidden;
   display: grid;
   justify-items: center;
   text-align: center;
-  line-height: 1.15;
+  line-height: 14px;
   padding: 3px 7px;
   border-radius: var(--radius-sm);
   background: var(--surface);
   border: 1px solid var(--line);
+  font-family: var(--font-ui);
+}
+.site-marker.is-named {
+  z-index: 1;
+}
+.site-marker.is-named .site-marker__text {
+  visibility: visible;
 }
 .site-marker[data-side="above"] .site-marker__text {
   bottom: calc(100% + 6px);
@@ -845,6 +852,7 @@ select {
   white-space: nowrap;
 }
 .site-marker__alt {
+  display: none;
   font-size: 11px;
   color: var(--ink-3);
   white-space: nowrap;
@@ -856,13 +864,8 @@ select {
   border-color: var(--accent);
   background: var(--accent);
 }
-.site-marker.is-selected .site-marker__text {
-  opacity: 0;
-  transition: opacity 160ms var(--ease);
-}
-.site-marker.is-selected:hover .site-marker__text,
-.site-marker.is-selected:focus-visible .site-marker__text {
-  opacity: 1;
+.site-marker.is-selected .site-marker__alt {
+  display: block;
 }
 .site-marker__badge {
   position: absolute;
@@ -888,7 +891,7 @@ select {
   border-color: var(--stop);
 }
 
-/* corridor ribbon — the signature: the five sites strung west to east */
+/* corridor ribbon */
 
 .ribbon {
   position: absolute;
@@ -902,35 +905,56 @@ select {
   max-width: 980px;
   margin: 0 auto;
 }
-.ribbon__axis {
+.ribbon__head {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-3);
   font-size: var(--text-xs);
   color: var(--ink-3);
-  margin-bottom: 2px;
+  margin-bottom: var(--space-1);
 }
-.ribbon__street {
+.ribbon__picker {
   flex: 1;
-  text-align: center;
-  color: var(--ink-3);
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+}
+.ribbon__picker .select {
+  min-width: 0;
+  min-height: 32px;
+  color: var(--ink);
+  text-overflow: ellipsis;
 }
 .ribbon__sites {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+}
+.ribbon__sites li {
+  flex: 1 0 auto;
+  min-width: 120px;
   position: relative;
 }
-.ribbon__sites::before {
+.ribbon__sites[data-connected] li::before {
   content: "";
   position: absolute;
-  left: 10%;
-  right: 10%;
-  top: 16px;
+  left: 0;
+  right: 0;
+  top: 14px;
   height: 1px;
   background: var(--line-strong);
+}
+.ribbon__sites[data-connected] li:first-child::before {
+  left: 50%;
+}
+.ribbon__sites[data-connected] li:last-child::before {
+  right: 50%;
 }
 .ribbon__site {
   width: 100%;
@@ -978,10 +1002,7 @@ select {
   font-size: var(--text-sm);
   font-weight: 500;
   color: var(--ink);
-  max-width: 100%;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 .ribbon__phases {
   display: flex;
@@ -2247,10 +2268,6 @@ select {
   }
   .metrics__list {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-  .ribbon__sites {
-    grid-template-columns: repeat(5, minmax(84px, 1fr));
-    overflow-x: auto;
   }
   .about-grid,
   .flow {

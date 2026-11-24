@@ -39,15 +39,20 @@ export interface SignalHeadProps {
   lane: string;
 }
 
+export type Direction = "northbound" | "eastbound" | "southbound" | "westbound";
+
 export interface ApproachInfo {
   id: string;
   street: string;
+  streetEn: string;
+  direction: Direction;
   label: string;
 }
 
 export interface CrosswalkInfo {
   id: string;
   label: string;
+  streets: { en: string; mn: string }[];
   length: number;
 }
 
@@ -73,6 +78,14 @@ export interface SiteInfo {
   phases: PhaseInfo[];
 }
 
+export interface CorridorInfo {
+  id: string;
+  nameEn: string;
+  nameMn: string;
+  axis: "ew" | "ns";
+  sites: string[];
+}
+
 export interface ScenarioInfo {
   label: string;
   duration: number;
@@ -88,6 +101,7 @@ export interface ControllerInfo {
 export interface Network {
   bounds: [LngLat, LngLat];
   sites: SiteInfo[];
+  corridors?: CorridorInfo[];
   roads: LineCollection<RoadProps>;
   sidewalks: LineCollection<SidewalkProps>;
   crossings: LineCollection<CrossingProps>;
@@ -148,6 +162,7 @@ export type OverrideRule = "pedestrian-hard-cap" | "vehicle-hard-cap" | "vehicle
 export interface Metrics {
   t: number;
   avgVehicleWait: number;
+  maxVehicleWait: number;
   vehiclesPerHour: number;
   avgPedestrianWait: number;
   maxPedestrianWait: number;
@@ -208,7 +223,7 @@ export type ControlCommand =
   | { action: "button"; site: string; target: string }
   | { action: "block"; site: string; target: string };
 
-export type ExperimentMetrics = Metrics & { wallSeconds?: number };
+export type ExperimentMetrics = Omit<Metrics, "maxVehicleWait"> & { maxVehicleWait?: number; wallSeconds?: number };
 
 export interface ExperimentResult {
   scenario: string;

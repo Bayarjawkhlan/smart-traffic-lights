@@ -11,10 +11,11 @@ import { Icon } from "../ui/Icon";
 import { controllerColor } from "../ui/palette";
 import { renderCode } from "../ui/renderCode";
 
-type MetricKey = "avgVehicleWait" | "avgPedestrianWait" | "maxPedestrianWait" | "vehiclesPerHour" | "spillbackMinutes" | "overrideCount";
+type MetricKey = "avgVehicleWait" | "maxVehicleWait" | "avgPedestrianWait" | "maxPedestrianWait" | "vehiclesPerHour" | "spillbackMinutes" | "overrideCount";
 
 const METRICS: { key: MetricKey; label: StringKey; lowerBetter: boolean; digits: number }[] = [
   { key: "avgVehicleWait", label: "metric_avgVehicleWait", lowerBetter: true, digits: 1 },
+  { key: "maxVehicleWait", label: "metric_maxVehicleWait", lowerBetter: true, digits: 0 },
   { key: "vehiclesPerHour", label: "metric_vehiclesPerHour", lowerBetter: false, digits: 0 },
   { key: "avgPedestrianWait", label: "metric_avgPedestrianWait", lowerBetter: true, digits: 1 },
   { key: "maxPedestrianWait", label: "metric_maxPedestrianWait", lowerBetter: true, digits: 0 },

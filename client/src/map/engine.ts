@@ -44,7 +44,7 @@ interface PointCollection {
 }
 
 const FLASH_MS = 2600;
-const FIT_PADDING = { top: 20, right: 48, bottom: 128, left: 20 };
+const FIT_PADDING = { top: 20, right: 48, bottom: 160, left: 20 };
 const TELEPORT_METERS = 40;
 
 const lightColor = (fallback: string): ExpressionSpecification => [
@@ -119,7 +119,7 @@ export class MapEngine {
     this.map.remove();
   }
 
-  fitCorridor(): void {
+  fitNetwork(): void {
     this.map.fitBounds(this.network.bounds as LngLatBoundsLike, { padding: FIT_PADDING, duration: this.reducedMotion ? 0 : 600 });
   }
 

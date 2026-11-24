@@ -7,15 +7,17 @@ import { EventFeed } from "./EventFeed";
 import { MetricsStrip } from "./MetricsStrip";
 import { OperatorBar } from "./OperatorBar";
 import { SitePanel } from "./SitePanel";
+import type { CorridorChoice } from "./useCorridor";
 import { renderCode } from "../ui/renderCode";
 
 interface Props {
   operator: boolean;
+  corridor: CorridorChoice;
   selectedSite: string | null;
   onSelectSite: (id: string | null) => void;
 }
 
-export function LivePage({ operator, selectedSite, onSelectSite }: Props) {
+export function LivePage({ operator, corridor, selectedSite, onSelectSite }: Props) {
   const snapshot = useLive();
   const { t } = useI18n();
   const { network, state, frame } = snapshot;
@@ -23,6 +25,11 @@ export function LivePage({ operator, selectedSite, onSelectSite }: Props) {
     selectedSite ? { site: selectedSite, nonce: 0 } : null,
   );
   const site = network?.sites.find((s) => s.id === selectedSite) ?? null;
+
+  const selectOnMap = (id: string) => {
+    corridor.reveal(id);
+    onSelectSite(id);
+  };
 
   const selectAndFocus = (id: string) => {
     onSelectSite(id);
@@ -48,17 +55,30 @@ export function LivePage({ operator, selectedSite, onSelectSite }: Props) {
       {operator && state && <OperatorBar network={network} state={state} />}
       <div className="live__body">
         <div className="live__map">
-          <LiveMap network={network} selectedSite={selectedSite} onSelectSite={(id) => id && onSelectSite(id)} focusRequest={focusRequest} />
-          <CorridorRibbon network={network} frame={frame} selectedSite={selectedSite} onSelect={selectAndFocus} />
+          <LiveMap
+            network={network}
+            corridor={corridor.corridor}
+            selectedSite={selectedSite}
+            onSelectSite={selectOnMap}
+            focusRequest={focusRequest}
+          />
+          <CorridorRibbon
+            network={network}
+            corridor={corridor.corridor}
+            frame={frame}
+            selectedSite={selectedSite}
+            onChoose={corridor.choose}
+            onSelect={selectAndFocus}
+          />
         </div>
-        <aside className="live__rail" aria-label={site ? undefined : t("corridor")}>
+        <aside className="live__rail" aria-label={site ? undefined : t("eventFeed")}>
           {site ? (
             <SitePanel key={site.id} network={network} site={site} snapshot={snapshot} operator={operator} onClose={() => onSelectSite(null)} />
           ) : (
             <div className="rail-overview">
               <header className="rail-overview__head">
                 <h2>{t("eventFeed")}</h2>
-                <p className="hint">{t("corridorHint")}</p>
+                <p className="hint">{t("siteHint")}</p>
               </header>
               <EventFeed events={snapshot.events} network={network} emptyText={t("eventsEmpty")} />
             </div>

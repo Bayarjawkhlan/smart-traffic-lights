@@ -3,12 +3,13 @@ import workerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { useEffect, useRef } from "react";
 import { live } from "../api/live";
-import type { Network } from "../api/types";
+import type { CorridorInfo, Network } from "../api/types";
 import { useI18n } from "../i18n/I18n";
 import { siteName, siteSecondaryName } from "../i18n/names";
 import { prefersReducedMotion } from "../lib/useMediaQuery";
 import { MapEngine } from "./engine";
 import { MapLegend } from "./MapLegend";
+import { SiteLabels } from "./siteLabels";
 
 setWorkerUrl(workerUrl);
 
@@ -20,15 +21,17 @@ const RULE_SHORT: Record<string, { en: string; mn: string }> = {
 
 interface Props {
   network: Network;
+  corridor: CorridorInfo | null;
   selectedSite: string | null;
-  onSelectSite: (id: string | null) => void;
+  onSelectSite: (id: string) => void;
   focusRequest: { site: string; nonce: number } | null;
 }
 
-export function LiveMap({ network, selectedSite, onSelectSite, focusRequest }: Props) {
+export function LiveMap({ network, corridor, selectedSite, onSelectSite, focusRequest }: Props) {
   const containerRef = useRef<HTMLDivElement>(null);
   const engineRef = useRef<MapEngine | null>(null);
   const markersRef = useRef(new Map<string, { marker: Marker; element: HTMLButtonElement }>());
+  const labelsRef = useRef<SiteLabels | null>(null);
   const onSelectRef = useRef(onSelectSite);
   const { lang, t } = useI18n();
   const langRef = useRef(lang);
@@ -44,16 +47,15 @@ export function LiveMap({ network, selectedSite, onSelectSite, focusRequest }: P
     const engine = new MapEngine(container, network, prefersReducedMotion());
     engineRef.current = engine;
     const markers = markersRef.current;
+    const labels = new SiteLabels(engine.map);
+    labelsRef.current = labels;
     const badgeTimers = new Map<string, number>();
 
-    const westToEast = [...network.sites].sort((a, b) => a.center[0] - b.center[0]);
     for (const site of network.sites) {
-      const below = westToEast.indexOf(site) % 2 === 1;
       const element = document.createElement("button");
       element.type = "button";
       element.className = "site-marker";
       element.dataset.kind = site.kind;
-      element.dataset.side = below ? "below" : "above";
       element.innerHTML = `<span class="site-marker__pin" aria-hidden="true"></span><span class="site-marker__text"><span class="site-marker__name"></span><span class="site-marker__alt"></span></span><span class="site-marker__badge" aria-hidden="true"></span>`;
       element.addEventListener("click", (event) => {
         event.stopPropagation();
@@ -61,6 +63,7 @@ export function LiveMap({ network, selectedSite, onSelectSite, focusRequest }: P
       });
       const marker = new Marker({ element, anchor: "center" }).setLngLat(site.center).addTo(engine.map);
       markers.set(site.id, { marker, element });
+      labels.add(site.id, site.center, element, element.querySelector<HTMLElement>(".site-marker__text")!);
     }
 
     const offFrame = live.onFrame((frame) => engine.ingest(frame));
@@ -90,6 +93,8 @@ export function LiveMap({ network, selectedSite, onSelectSite, focusRequest }: P
       for (const timer of badgeTimers.values()) window.clearTimeout(timer);
       for (const { marker } of markers.values()) marker.remove();
       markers.clear();
+      labels.destroy();
+      labelsRef.current = null;
       engine.destroy();
       engineRef.current = null;
     };
@@ -110,7 +115,8 @@ export function LiveMap({ network, selectedSite, onSelectSite, focusRequest }: P
       element.classList.toggle("is-selected", id === selectedSite);
       element.setAttribute("aria-pressed", String(id === selectedSite));
     }
-  }, [selectedSite]);
+    labelsRef.current?.show(corridor?.sites ?? [], selectedSite);
+  }, [network, corridor, selectedSite]);
 
   useEffect(() => {
     if (!focusRequest) return;
@@ -120,13 +126,13 @@ export function LiveMap({ network, selectedSite, onSelectSite, focusRequest }: P
 
   return (
     <div className="map-shell">
-      <div ref={containerRef} className="map-canvas" role="region" aria-label={t("corridor")} />
+      <div ref={containerRef} className="map-canvas" role="region" aria-label={t("networkMap")} />
       <MapLegend />
-      <button type="button" className="map-fit" onClick={() => engineRef.current?.fitCorridor()} title={t("fitCorridor")}>
+      <button type="button" className="map-fit" onClick={() => engineRef.current?.fitNetwork()} title={t("fitNetwork")}>
         <svg viewBox="0 0 16 16" aria-hidden="true">
           <path d="M2 6V2h4M10 2h4v4M14 10v4h-4M6 14H2v-4" fill="none" stroke="currentColor" strokeWidth="1.5" />
         </svg>
-        <span className="sr-only">{t("fitCorridor")}</span>
+        <span className="sr-only">{t("fitNetwork")}</span>
       </button>
     </div>
   );
