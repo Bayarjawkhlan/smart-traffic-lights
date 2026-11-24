@@ -15,9 +15,9 @@ type MetricKey = "avgVehicleWait" | "maxVehicleWait" | "avgPedestrianWait" | "ma
 
 const METRICS: { key: MetricKey; label: StringKey; lowerBetter: boolean; digits: number }[] = [
   { key: "avgVehicleWait", label: "metric_avgVehicleWait", lowerBetter: true, digits: 1 },
-  { key: "maxVehicleWait", label: "metric_maxVehicleWait", lowerBetter: true, digits: 0 },
-  { key: "vehiclesPerHour", label: "metric_vehiclesPerHour", lowerBetter: false, digits: 0 },
   { key: "avgPedestrianWait", label: "metric_avgPedestrianWait", lowerBetter: true, digits: 1 },
+  { key: "vehiclesPerHour", label: "metric_vehiclesPerHour", lowerBetter: false, digits: 0 },
+  { key: "maxVehicleWait", label: "metric_maxVehicleWait", lowerBetter: true, digits: 0 },
   { key: "maxPedestrianWait", label: "metric_maxPedestrianWait", lowerBetter: true, digits: 0 },
   { key: "spillbackMinutes", label: "metric_spillbackMinutes", lowerBetter: true, digits: 1 },
   { key: "overrideCount", label: "metric_overrideCount", lowerBetter: true, digits: 0 },
@@ -161,6 +161,7 @@ function Verdict({ results, controllers }: { results: ExperimentResult[]; contro
   };
   const shown: { key: MetricKey; lowerBetter: boolean; label: StringKey }[] = [
     { key: "avgVehicleWait", lowerBetter: true, label: "avgVehicleWait" },
+    { key: "maxVehicleWait", lowerBetter: true, label: "maxVehicleWait" },
     { key: "avgPedestrianWait", lowerBetter: true, label: "avgPedWait" },
     { key: "vehiclesPerHour", lowerBetter: false, label: "vehiclesPerHour" },
   ];

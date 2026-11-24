@@ -47,7 +47,10 @@ export function LiveMap({ network, corridor, selectedSite, onSelectSite, focusRe
     const engine = new MapEngine(container, network, prefersReducedMotion());
     engineRef.current = engine;
     const markers = markersRef.current;
-    const labels = new SiteLabels(engine.map);
+    const labels = new SiteLabels(
+      engine.map,
+      () => container.closest(".live__map")?.querySelectorAll(".map-legend, .maplibregl-ctrl-group, .map-fit, .ribbon") ?? [],
+    );
     labelsRef.current = labels;
     const badgeTimers = new Map<string, number>();
 
@@ -56,14 +59,14 @@ export function LiveMap({ network, corridor, selectedSite, onSelectSite, focusRe
       element.type = "button";
       element.className = "site-marker";
       element.dataset.kind = site.kind;
-      element.innerHTML = `<span class="site-marker__pin" aria-hidden="true"></span><span class="site-marker__text"><span class="site-marker__name"></span><span class="site-marker__alt"></span></span><span class="site-marker__badge" aria-hidden="true"></span>`;
+      element.innerHTML = `<span class="site-marker__pin" aria-hidden="true"></span><span class="site-marker__badge" aria-hidden="true"></span>`;
       element.addEventListener("click", (event) => {
         event.stopPropagation();
         onSelectRef.current(site.id);
       });
       const marker = new Marker({ element, anchor: "center" }).setLngLat(site.center).addTo(engine.map);
       markers.set(site.id, { marker, element });
-      labels.add(site.id, site.center, element, element.querySelector<HTMLElement>(".site-marker__text")!);
+      labels.add(site.id, site.center, element);
     }
 
     const offFrame = live.onFrame((frame) => engine.ingest(frame));
@@ -104,15 +107,20 @@ export function LiveMap({ network, corridor, selectedSite, onSelectSite, focusRe
     for (const site of network.sites) {
       const entry = markersRef.current.get(site.id);
       if (!entry) continue;
-      entry.element.querySelector(".site-marker__name")!.textContent = siteName(site, lang);
-      entry.element.querySelector(".site-marker__alt")!.textContent = siteSecondaryName(site, lang);
       entry.element.setAttribute("aria-label", `${siteName(site, lang)} — ${t(site.kind === "midblock" ? "midblock" : "intersection")}`);
     }
+    labelsRef.current?.setNames(
+      network.sites.map((site) => ({ id: site.id, name: siteName(site, lang), alt: siteSecondaryName(site, lang) })),
+    );
   }, [network, lang, t]);
 
   useEffect(() => {
     for (const [id, { element }] of markersRef.current) {
+      const position = corridor ? corridor.sites.indexOf(id) + 1 : 0;
       element.classList.toggle("is-selected", id === selectedSite);
+      element.classList.toggle("is-quiet", corridor !== null && position === 0);
+      element.classList.toggle("is-numbered", position > 0);
+      element.querySelector(".site-marker__pin")!.textContent = position ? String(position) : "";
       element.setAttribute("aria-pressed", String(id === selectedSite));
     }
     labelsRef.current?.show(corridor?.sites ?? [], selectedSite);

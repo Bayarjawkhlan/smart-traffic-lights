@@ -818,54 +818,78 @@ select {
 .site-marker[data-kind="midblock"] .site-marker__pin {
   border-radius: 3px;
 }
-.site-marker__text {
-  position: absolute;
-  left: 50%;
-  transform: translateX(var(--shift, -50%));
-  visibility: hidden;
+.site-marker.is-quiet .site-marker__pin {
+  width: 10px;
+  height: 10px;
+  border-color: var(--ink-3);
+}
+.site-marker.is-numbered {
+  z-index: 1;
+}
+.site-marker.is-numbered .site-marker__pin {
+  width: 18px;
+  height: 18px;
   display: grid;
-  justify-items: center;
-  text-align: center;
-  line-height: 14px;
+  place-items: center;
+  border-color: var(--ink);
+  background: var(--surface-3);
+  color: var(--ink);
+  font: 600 11px/1 var(--font-ui);
+}
+.site-names {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.site-name {
+  position: absolute;
+  top: 0;
+  left: 0;
+  visibility: hidden;
+  width: max-content;
   padding: 3px 7px;
   border-radius: var(--radius-sm);
   background: var(--surface);
   border: 1px solid var(--line);
-  font-family: var(--font-ui);
+  color: var(--ink);
+  font: 500 12px/14px var(--font-ui);
+  text-align: center;
+  white-space: nowrap;
 }
-.site-marker.is-named {
-  z-index: 1;
-}
-.site-marker.is-named .site-marker__text {
+.site-name.is-shown {
   visibility: visible;
 }
-.site-marker[data-side="above"] .site-marker__text {
-  bottom: calc(100% + 6px);
+.site-name[data-form^="wrap"] .site-name__main > span,
+.site-name[data-form$="alt"] .site-name__alt {
+  display: block;
 }
-.site-marker[data-side="below"] .site-marker__text {
-  top: calc(100% + 6px);
-}
-.site-marker__name {
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--ink);
-  white-space: nowrap;
-}
-.site-marker__alt {
+.site-name__alt {
   display: none;
   font-size: 11px;
+  font-weight: 400;
   color: var(--ink-3);
-  white-space: nowrap;
 }
 .site-marker:hover .site-marker__pin {
   transform: scale(1.15);
 }
+.site-marker.is-selected {
+  z-index: 2;
+}
+.site-marker.is-selected .site-marker__pin,
+.site-marker.is-quiet:focus-visible .site-marker__pin {
+  width: 18px;
+  height: 18px;
+}
+@media (hover: hover) {
+  .site-marker.is-quiet:hover .site-marker__pin {
+    width: 18px;
+    height: 18px;
+  }
+}
 .site-marker.is-selected .site-marker__pin {
   border-color: var(--accent);
   background: var(--accent);
-}
-.site-marker.is-selected .site-marker__alt {
-  display: block;
+  color: var(--ink-on-accent);
 }
 .site-marker__badge {
   position: absolute;
@@ -906,39 +930,66 @@ select {
   margin: 0 auto;
 }
 .ribbon__head {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  font-size: var(--text-xs);
-  color: var(--ink-3);
   margin-bottom: var(--space-1);
 }
 .ribbon__picker {
-  flex: 1;
-  min-width: 0;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr minmax(0, auto) 1fr;
   align-items: center;
-  justify-content: center;
   gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--ink-3);
+}
+.ribbon__picker > span {
+  justify-self: end;
 }
 .ribbon__picker .select {
   min-width: 0;
-  min-height: 32px;
   color: var(--ink);
   text-overflow: ellipsis;
 }
+.ribbon__row {
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--line-strong) transparent;
+  --fade-before: 0px;
+  --fade-after: 0px;
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 var(--fade-before),
+    #000 calc(100% - var(--fade-after)),
+    transparent
+  );
+}
+.ribbon__row[data-more-before] {
+  --fade-before: 16px;
+}
+.ribbon__row[data-more-after] {
+  --fade-after: 16px;
+}
+.ribbon__track {
+  display: flex;
+  width: max-content;
+  min-width: 100%;
+}
+.ribbon__end {
+  flex: none;
+  margin-top: 5px;
+  font-size: var(--text-xs);
+  line-height: 18px;
+  color: var(--ink-3);
+}
 .ribbon__sites {
+  flex: 1;
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
-  overflow-x: auto;
-  scrollbar-width: thin;
-  scrollbar-color: var(--line-strong) transparent;
 }
 .ribbon__sites li {
-  flex: 1 0 auto;
-  min-width: 120px;
+  flex: 1 1 0;
+  min-width: max-content;
   position: relative;
 }
 .ribbon__sites[data-connected] li::before {
@@ -958,6 +1009,7 @@ select {
 }
 .ribbon__site {
   width: 100%;
+  min-width: 120px;
   display: grid;
   justify-items: center;
   gap: 3px;
@@ -968,6 +1020,9 @@ select {
   cursor: pointer;
   text-align: center;
   transition: background 140ms var(--ease);
+}
+.ribbon__site:focus-visible {
+  outline-offset: -2px;
 }
 .ribbon__site:hover {
   background: var(--surface-2);
@@ -1003,6 +1058,10 @@ select {
   font-weight: 500;
   color: var(--ink);
   white-space: nowrap;
+}
+.ribbon__number {
+  margin-right: 5px;
+  color: var(--ink-3);
 }
 .ribbon__phases {
   display: flex;
@@ -1751,9 +1810,13 @@ select {
 }
 .verdict__card dl {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
   gap: var(--space-3);
   margin: var(--space-3) 0 0;
+}
+.verdict__card dl > div {
+  display: grid;
+  grid-template-rows: 1fr auto;
 }
 .verdict__card dt {
   color: var(--ink-3);
@@ -1810,10 +1873,11 @@ select {
 
 .chart-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: var(--space-4);
 }
 .chart-card {
+  grid-column: span 3;
   padding: var(--space-4);
   border-radius: var(--radius-lg);
   background: var(--surface);
@@ -1822,6 +1886,9 @@ select {
   gap: var(--space-3);
   align-content: start;
   min-width: 0;
+}
+.chart-card:nth-child(-n + 3) {
+  grid-column: span 2;
 }
 .chart-card header {
   display: flex;
@@ -2183,6 +2250,12 @@ select {
 
 /* ───────────── narrower screens ───────────── */
 
+@media (pointer: coarse) {
+  .ribbon__picker .select {
+    min-height: 44px;
+  }
+}
+
 @media (max-width: 1440px) {
   .brand__tag {
     display: none;
@@ -2202,6 +2275,15 @@ select {
   }
   .operator {
     column-gap: var(--space-4);
+  }
+}
+
+@media (max-width: 1240px) {
+  .chart-card:nth-child(n) {
+    grid-column: span 3;
+  }
+  .chart-card:last-child {
+    grid-column: 1 / -1;
   }
 }
 
@@ -2276,8 +2358,19 @@ select {
   .flow__step::after {
     content: none !important;
   }
-  .chart-grid {
-    grid-template-columns: 1fr;
+  .ribbon__picker {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .ribbon__picker > span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+  .chart-card:nth-child(n) {
+    grid-column: 1 / -1;
   }
   .page__head {
     flex-direction: column;

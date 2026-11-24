@@ -1,6 +1,6 @@
 # Factory: Signal Sites beyond Peace Avenue
 spec: docs/specs/0001-street-network/index.md
-branch: factory/street-network   worktree: /Users/bayarjavkhlan/Documents/projects/smart-traffic-lights-factory-street-network   base: feat/corridor-demo (local, unpushed, 9ada9d0)
+branch: factory/street-network   worktree: ../smart-traffic-lights-factory-street-network (sibling of the main checkout)   base: feat/corridor-demo (local, unpushed, 9ada9d0)
 ship policy: none chosen (user asleep): no push, no PR, no merge; stop at a finished local branch
 stage: verify
 round: 0
@@ -24,5 +24,7 @@ pr:
 | AC | Result |
 |---|---|
 | AC1-AC9, AC11-AC13, AC15-AC17 | pass |
-| AC10 | fail at 8.5x, 60 fps passes |
+| AC10 | failed at 8.5x, fixed by deadline pacing; 9.95x over 60 s in the foreman's own timing, 9.87x in the code reviewer's; 60 fps drawn |
 | AC14 | fail on one sentence, fixed |
+- 2026-11-24 review round 1 (head 3adb02d): code pass, security pass, ux changes (2 majors), ui changes (4 majors). Client majors sent to the S3 builder.
+- 2026-11-24 incident: the code reviewer ran `pkill -f corridor_sim.server`, which killed the other reviewers' test servers. The user's three Docker containers are stopped; they finished at 02:50 UTC, before the first agent pkill (03:05 UTC), and no agent ran a Docker stop. Left as found.

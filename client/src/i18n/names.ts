@@ -10,7 +10,7 @@ const CONTROLLER_NAMES: Record<string, Record<Language, string>> = {
 
 const CONTROLLER_HINTS: Record<string, Record<Language, string>> = {
   "fixed-time": { en: "today's baseline", mn: "өнөөдрийн суурь" },
-  "max-pressure": { en: "queues against exit roads", mn: "дарааллыг гарах замтай харьцуулна" },
+  "max-pressure": { en: "compares queues with exit roads", mn: "хүлээж буй машиныг гарах замын машинтай харьцуулна" },
   rl: { en: "trained in simulation", mn: "симуляцад сурсан" },
 };
 

@@ -6,7 +6,8 @@ import { bestLight, linkLight, type Light } from "../lib/signals";
 
 const RADIUS = 90;
 const LANE_WIDTH = 3.3;
-const JUNCTION_RADIUS = 40;
+const JUNCTION_REACH = 12;
+const BADGE_LIMIT = RADIUS - 6;
 
 interface Geometry {
   junction: string | null;
@@ -35,14 +36,21 @@ function buildGeometry(network: Network, site: SiteInfo): Geometry {
     if (approach !== null) {
       const badge = pointBack(points, 26);
       const offset = feature.properties.lanes * LANE_WIDTH * 0.5 + 6;
-      badges.push({ n: approach + 1, x: badge.x + badge.nx * offset, y: badge.y + badge.ny * offset });
+      badges.push({
+        n: approach + 1,
+        x: clampToView(badge.x + badge.nx * offset),
+        y: clampToView(badge.y + badge.ny * offset),
+      });
     }
   }
+  const own = [...network.signalHeads.features, ...network.crossings.features]
+    .filter((f) => f.properties.site === site.id)
+    .flatMap((f) => f.geometry.coordinates);
   const ends = network.roads.features
     .flatMap((f) => [f.geometry.coordinates[0], f.geometry.coordinates[f.geometry.coordinates.length - 1]])
-    .filter((c): c is [number, number] => c !== undefined && distanceMeters(site.center, c) < JUNCTION_RADIUS)
-    .map(project);
-  const hull = convexHull(ends);
+    .filter((c) => c !== undefined)
+    .filter((c) => own.some((point) => distanceMeters(point, c) < JUNCTION_REACH));
+  const hull = convexHull([...own, ...ends].map(project));
   return {
     junction: hull.length >= 3 ? `${pathOf(hull)}Z` : null,
     roads,
@@ -56,6 +64,8 @@ function buildGeometry(network: Network, site: SiteInfo): Geometry {
     badges,
   };
 }
+
+const clampToView = (value: number) => Math.min(Math.max(value, -BADGE_LIMIT), BADGE_LIMIT);
 
 function convexHull(points: [number, number][]): [number, number][] {
   const sorted = [...points].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
