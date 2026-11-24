@@ -76,7 +76,6 @@ export function ExperimentsPage({ operator }: { operator: boolean }) {
     <div className="page page--experiments">
       <header className="page__head">
         <div>
-          <span className="eyebrow">{t("navExperiments")}</span>
           <h1>{t("experimentsTitle")}</h1>
           <p className="page__lead">{t("experimentsLead")}</p>
         </div>
@@ -116,7 +115,7 @@ export function ExperimentsPage({ operator }: { operator: boolean }) {
           <div className="legend-row" aria-label="Legend">
             {controllers.map((name) => (
               <span key={name} className="legend-row__item">
-                <i className={`legend-swatch${name === BASELINE ? " legend-swatch--baseline" : ""}`} style={{ color: controllerColor(name) }} />
+                <i className={`legend-swatch`} style={{ color: controllerColor(name) }} />
                 {controllerName(name, lang)}
                 <small>{name === BASELINE ? t("baseline") : controllerHint(name, lang)}</small>
               </span>
@@ -239,7 +238,7 @@ function MetricCard({ metric, results, controllers, view }: CardProps) {
                       aria-label={`${name}: ${value === undefined ? t("noValue") : num(value, metric.digits)}${d ? `, ${d.text} ${t("vsBaseline")}` : ""}`}
                     >
                       <span
-                        className={`bars__bar${controller === BASELINE ? " bars__bar--baseline" : ""}`}
+                        className={`bars__bar`}
                         style={{ width: `${((value ?? 0) / max) * 100}%`, color: controllerColor(controller) }}
                       />
                       <span className="bars__value mono">{value === undefined ? t("noValue") : num(value, metric.digits)}</span>

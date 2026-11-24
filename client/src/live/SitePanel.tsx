@@ -58,7 +58,7 @@ export function SitePanel({ network, site, snapshot, operator, onClose }: Props)
           {t("backToCorridor")}
         </button>
         <div className="site-panel__title">
-          <span className="eyebrow">{t(site.kind === "midblock" ? "midblock" : "intersection")}</span>
+          <span className="label">{t(site.kind === "midblock" ? "midblock" : "intersection")}</span>
           <h2 id="site-title">{siteName(site, lang)}</h2>
           <p lang={lang === "mn" ? "en" : "mn"}>{siteSecondaryName(site, lang)}</p>
         </div>

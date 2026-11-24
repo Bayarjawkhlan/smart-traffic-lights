@@ -5,7 +5,6 @@ import type { SiteInfo } from "../api/types";
 import { useI18n } from "../i18n/I18n";
 import type { Language } from "../i18n/strings";
 import { clock } from "../lib/format";
-import { Icon } from "../ui/Icon";
 
 type Result =
   | { kind: "idle" }
@@ -34,7 +33,6 @@ export function ExplainBox({ site, available }: { site: SiteInfo; available: boo
     <section className="site-panel__section explain">
       <div className="explain__controls">
         <button type="button" className="button button--primary" disabled={!available || result.kind === "loading"} onClick={ask}>
-          <Icon name="spark" />
           {t("explain")}
         </button>
         <div className="segmented segmented--tight" role="group" aria-label={t("explainIn")}>

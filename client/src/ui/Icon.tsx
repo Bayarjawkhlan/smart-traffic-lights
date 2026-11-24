@@ -7,7 +7,6 @@ const PATHS = {
   sliders: "M3 4.5h10M3 11.5h10M6 2.5v4M10 9.5v4",
   hand: "M8 2v6M5.5 4v5M10.5 4v5M5.5 9c0 3 1.2 5 3.5 5s3.5-1.5 3.5-4V6",
   block: "M3 8h10M8 3a5 5 0 1 0 0 10A5 5 0 0 0 8 3z",
-  spark: "M8 2v3M8 11v3M2 8h3M11 8h3M4 4l2 2M10 10l2 2M12 4l-2 2M6 10l-2 2",
   alert: "M8 2.5l6 11H2zM8 7v3M8 11.8v.2",
   info: "M8 2a6 6 0 1 0 0 12A6 6 0 0 0 8 2zM8 7v4M8 5v.2",
 } as const;

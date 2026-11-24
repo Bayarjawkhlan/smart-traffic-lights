@@ -326,8 +326,8 @@ export class MapEngine {
         map.setPaintProperty(layer.id, "line-opacity", 0.28);
       }
       if (layer.id === "building") {
-        map.setPaintProperty(layer.id, "fill-color", "#151c26");
-        map.setPaintProperty(layer.id, "fill-outline-color", "#1d2632");
+        map.setPaintProperty(layer.id, "fill-color", "#1f2328");
+        map.setPaintProperty(layer.id, "fill-outline-color", "#262b31");
       }
       if (layer.id === "background") map.setPaintProperty(layer.id, "background-color", palette.night);
     }

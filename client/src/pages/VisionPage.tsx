@@ -72,7 +72,6 @@ export function VisionPage() {
     <div className="page page--vision">
       <header className="page__head">
         <div>
-          <span className="eyebrow">{t("navVision")}</span>
           <h1>{t("visionTitle")}</h1>
           <p className="page__lead">{t("visionLead")}</p>
         </div>

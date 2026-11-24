@@ -16,7 +16,6 @@ export function AboutPage() {
     <div className="page page--about">
       <header className="page__head">
         <div>
-          <span className="eyebrow">{t("navAbout")}</span>
           <h1>{t("aboutTitle")}</h1>
           <p className="page__lead">{t("aboutLead")}</p>
         </div>

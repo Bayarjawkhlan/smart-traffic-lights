@@ -10,7 +10,7 @@ const Vehicle = ({ color, length }: { color: string; length: number }) => (
 export function MapLegend() {
   const { t } = useI18n();
   return (
-    <details className="map-legend" open>
+    <details className="map-legend">
       <summary>{t("legendCongestion")} · {t("legendSignals")}</summary>
       <div className="map-legend__body">
         <section>
