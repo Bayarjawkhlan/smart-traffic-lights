@@ -28,3 +28,5 @@ pr:
 | AC14 | fail on one sentence, fixed |
 - 2026-11-24 review round 1 (head 3adb02d): code pass, security pass, ux changes (2 majors), ui changes (4 majors). Client majors sent to the S3 builder.
 - 2026-11-24 incident: the code reviewer ran `pkill -f corridor_sim.server`, which killed the other reviewers' test servers. The user's three Docker containers are stopped; they finished at 02:50 UTC, before the first agent pkill (03:05 UTC), and no agent ran a Docker stop. Left as found.
+- 2026-11-24 fix round 1 (3bc3d82): client majors fixed; names take no pointer events and hide rather than cover a pin, Corridor pins numbered, schematic hull per site; builder reports 576 label states and 540 taps clean. Review round 2 started (ux, ui, code on the fix diff).
+- 2026-11-24 review round 2 (3bc3d82): ux pass, ui pass, code pass (minors listed in the review files). Security pass at round 1, no change since touches it.
