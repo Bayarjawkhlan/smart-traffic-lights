@@ -1,6 +1,6 @@
 # 0001: A Network of Signal Sites beyond Peace Avenue
 
-Date: 2026-11-24 · Status: Implemented on factory/street-network, awaiting user review · Ledger: [factory.md](factory.md)
+Date: 2026-11-24 · Status: Implemented, on main · Ledger: [factory.md](factory.md)
 
 ## Summary
 
@@ -155,7 +155,7 @@ Real Max-pressure coordination, per-site RL models, vision, measured traffic dat
 The user was asleep and had asked to build, so the foreman took the recommended answer to each gap found. These are part of the spec and override anything above. **The user should read this section first.**
 
 1. **Guard lead (safety), withdrawn.** The cross-check claimed a pedestrian could reach 99 s at a 3-Phase site. S2 could not reproduce it: 80 s worst case with the original lead. The lead stays at its original two switches.
-2. **Operator caps, withdrawn.** The Operator pedestrian cap minimum stays at 45 s; any breach found at low caps is reported to the user, not fixed here.
+2. **Operator caps, withdrawn.** The Operator pedestrian cap minimum stays at 45 s; any breach found at low caps is reported to the user, not fixed here. Fixed afterwards: see the ledger.
 3. **Links.** `Site.links_by_index` replaces `site.links[i]` everywhere (`guard.py`, all three Controllers). `PhasePlanner` keeps every connection that shares an index.
 4. **Validation.** `model.validate_sites(sites) -> list[str]` (S2) returns one message per problem: 0 or more than 3 Phases, an Approach or Crosswalk no Phase serves, a vehicle signal index no Phase makes green, a shared TLS. The planner must return at most 3 Phases or the problem is reported. S1's build calls it and exits non-zero on any message.
 5. **Demand.** A volume is per entry edge, chosen by class and direction. An entry with no reachable exit fails the build unless it is listed as skipped in the build with a reason. Flows below 1 veh/h: drop the smallest exit and renormalise, repeatedly, until all flows are at least 1; keep the largest if none is. `scenarios.json` gets `entryVolumes: { [edgeId]: number }`. The 200 veh/h in AC5 is scheduled volume. AC6 also requires inserted vehicles ≥ 95% of scheduled.

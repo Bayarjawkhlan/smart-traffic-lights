@@ -86,7 +86,8 @@ class SafetyGuard:
         for crosswalk in site.crosswalks:
             wait = view.crosswalk_wait.get(crosswalk.id, 0.0)
             if wait > 0 and wait + lead >= caps.pedestrian_hard:
-                items.append(((3, wait - caps.pedestrian_hard), "pedestrian-hard-cap", crosswalk.label, wait,
+                # Same rank as the vehicle Hard Cap, so the least time left wins: pedestrians first let two Crosswalk Phases starve an Approach.
+                items.append(((2, wait - caps.pedestrian_hard), "pedestrian-hard-cap", crosswalk.label, wait,
                               {p.index for p in site.phases_serving_crosswalk(crosswalk)}))
         for approach in site.approaches:
             wait = view.approach_wait.get(approach.id, 0.0)

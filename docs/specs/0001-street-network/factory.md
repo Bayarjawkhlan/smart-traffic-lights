@@ -1,8 +1,8 @@
 # Factory: Signal Sites beyond Peace Avenue
 spec: docs/specs/0001-street-network/index.md
 branch: factory/street-network   worktree: ../smart-traffic-lights-factory-street-network (sibling of the main checkout)   base: feat/corridor-demo (local, unpushed, 9ada9d0)
-ship policy: none chosen (user asleep): no push, no PR, no merge; stop at a finished local branch
-stage: done (local branch; not pushed)
+ship policy: none chosen while the user was asleep; later the user asked to bring it into local main and push
+stage: done (fast-forwarded into main and pushed at 93e63df; no PR)
 round: 2
 pr:
 ## Log
@@ -32,3 +32,5 @@ pr:
 - 2026-11-24 review round 2 (3bc3d82): ux pass, ui pass, code pass (minors listed in the review files). Security pass at round 1, no change since touches it.
 - 2026-11-24 approval round 1 (efd3bbe): changes. Required: README pedestrian-cap claim (3 of 15 runs had people standing over 90 s through crowding) and About cap wording. Fixed by rewording; the red-throughout check finds nobody over 90 s in all 15 new runs (longest 79 s); crowding counts given as ranges. Screenshots retaken.
 - 2026-11-24 approval round 2 (8a96d8f): approve, risk human. Done as a local branch: not pushed, no PR, no merge, worktree kept.
+- 2026-11-24 after: user asked to bring the work into local main (fast-forward) and then to push main; pushed at 93e63df, no PR.
+- 2026-11-24 after: Operator-cap breach fixed in `guard.py` by ranking the two Hard Caps together by least time left. With the old ordering a 3-Phase site could starve an Approach at pedestrian cap 45. Search of the patched Guard (9,180 runs, 15 sites plus 2 synthetic, caps 45 to 90 and 60 to 600 s): no breach, tightest margin 0 s at cap 45. All 15 committed experiments replay identically.

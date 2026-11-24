@@ -2,10 +2,9 @@
 
 This survey chose the original five sites. The current 15-site Network is in [street-network-osm.md](street-network-osm.md).
 
-Source: Overpass API (overpass-api.de), OSM base timestamp `2026-11-23T15:25:49Z`. Raw JSON and scripts are in
-`/private/tmp/claude-501/-Users-bayarjavkhlan--t3-scratch-2026-11-23-https-github-com-srikeerthiraja-smart-2c074087/e3b6773a-4718-4f35-a8ac-df870b8be9cf/scratchpad/osm/`
+Source: Overpass API (overpass-api.de), OSM base timestamp `2026-11-23T15:25:49Z`. Raw JSON and scripts were in a temporary scratchpad, not kept
 (`raw/area_highways.json` is every `highway=*` way in bbox 47.908,106.875,47.925,106.96 plus their tagged nodes).
-The scratchpad is temporary, so re-run `scripts/q_all.overpassql` if it is gone.
+The query `scripts/q_all.overpassql` was in that scratchpad too.
 
 In OSM the avenue is `name=Энх тайваны өргөн чөлөө` (a few eastern ways use the variant spelling `Энх тайвны өргөн чөлөө`),
 `name:en=Peace Avenue`, `highway=trunk`, `ref=A0501`, `int_ref=AH3`. The query `Энхтайван*` (no space) finds only the
